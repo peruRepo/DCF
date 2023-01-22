@@ -1,0 +1,338 @@
+{
+    "symbol": "AAPL",
+    "enterpriseValues": [
+        {
+            "date": "2021-09-25",
+            "Stock Price": "148.6399994",
+            "Number of Shares": "1.6701272E10",
+            "Market Capitalization": 2482477060059.237,
+            "- Cash & Cash Equivalents": 34940000000,
+            "+ Total Debt": 124719000000,
+            "Enterprise Value": 2572256060059.237
+        },
+        {
+            "date": "2020-09-26",
+            "Stock Price": "115.0500031",
+            "Number of Shares": "1.7352119E10",
+            "Market Capitalization": 1996361344741.5688,
+            "- Cash & Cash Equivalents": 38016000000,
+            "+ Total Debt": 112436000000,
+            "Enterprise Value": 2070781344741.5688
+        },
+        {
+            "date": "2019-09-28",
+            "Stock Price": "62.2625008",
+            "Number of Shares": "1.8471336E10",
+            "Market Capitalization": 1150071572477.0688,
+            "- Cash & Cash Equivalents": 48844000000,
+            "+ Total Debt": 108047000000,
+            "Enterprise Value": 1209274572477.0688
+        },
+        {
+            "date": "2018-09-29",
+            "Stock Price": "53.0600014",
+            "Number of Shares": "1.9821508E10",
+            "Market Capitalization": 1051729242230.1112,
+            "- Cash & Cash Equivalents": 25913000000,
+            "+ Total Debt": 114483000000,
+            "Enterprise Value": 1140299242230.1113
+        },
+        {
+            "date": "2017-09-30",
+            "Stock Price": "41.6800003",
+            "Number of Shares": "2.0868968E10",
+            "Market Capitalization": 869818592500.6904,
+            "- Cash & Cash Equivalents": 20289000000,
+            "+ Total Debt": 115680000000,
+            "Enterprise Value": 965209592500.6904
+        },
+        {
+            "date": "2016-09-24",
+            "Stock Price": "29.4125004",
+            "Number of Shares": "2.188328E10",
+            "Market Capitalization": 643641981753.312,
+            "- Cash & Cash Equivalents": 20484000000,
+            "+ Total Debt": 87032000000,
+            "Enterprise Value": 710189981753.312
+        },
+        {
+            "date": "2015-09-26",
+            "Stock Price": "28.8199997",
+            "Number of Shares": "2.3013684E10",
+            "Market Capitalization": 663254365975.8948,
+            "- Cash & Cash Equivalents": 21120000000,
+            "+ Total Debt": 64462000000,
+            "Enterprise Value": 706596365975.8948
+        },
+        {
+            "date": "2014-09-27",
+            "Stock Price": "26.2775002",
+            "Number of Shares": "2.4342288E10",
+            "Market Capitalization": 639654477788.4575,
+            "- Cash & Cash Equivalents": 13844000000,
+            "+ Total Debt": 35295000000,
+            "Enterprise Value": 661105477788.4575
+        },
+        {
+            "date": "2013-09-28",
+            "Stock Price": "18.9242859",
+            "Number of Shares": "2.5909268E10",
+            "Market Capitalization": 490314395091.72125,
+            "- Cash & Cash Equivalents": 14259000000,
+            "+ Total Debt": 16960000000,
+            "Enterprise Value": 493015395091.72125
+        },
+        {
+            "date": "2012-09-29",
+            "Stock Price": "21.5714283",
+            "Number of Shares": "2.6174904E10",
+            "Market Capitalization": 564630064895.3832,
+            "- Cash & Cash Equivalents": 10746000000,
+            "+ Total Debt": 0,
+            "Enterprise Value": 553884064895.3832
+        },
+        {
+            "date": "2011-09-24",
+            "Stock Price": "14.491786",
+            "Number of Shares": "2.5879224E10",
+            "Market Capitalization": 375036176054.06396,
+            "- Cash & Cash Equivalents": 9815000000,
+            "+ Total Debt": 0,
+            "Enterprise Value": 365221176054.06396
+        },
+        {
+            "date": "2010-09-25",
+            "Stock Price": "11.0299997",
+            "Number of Shares": "2.5464908E10",
+            "Market Capitalization": 280877927600.5276,
+            "- Cash & Cash Equivalents": 11261000000,
+            "+ Total Debt": 0,
+            "Enterprise Value": 269616927600.5276
+        },
+        {
+            "date": "2009-09-26",
+            "Stock Price": "7.2314291",
+            "Number of Shares": "2.5004448E10",
+            "Market Capitalization": 180817892896.63678,
+            "- Cash & Cash Equivalents": 5263000000,
+            "+ Total Debt": 0,
+            "Enterprise Value": 175554892896.63678
+        },
+        {
+            "date": "2008-09-27",
+            "Stock Price": "3.288929",
+            "Number of Shares": "2.4684576E10",
+            "Market Capitalization": 81185817859.104,
+            "- Cash & Cash Equivalents": 11875000000,
+            "+ Total Debt": 0,
+            "Enterprise Value": 69310817859.104
+        },
+        {
+            "date": "2007-09-29",
+            "Stock Price": "6.6103568",
+            "Number of Shares": "2.420866E10",
+            "Market Capitalization": 160027880249.888,
+            "- Cash & Cash Equivalents": 9352000000,
+            "+ Total Debt": 0,
+            "Enterprise Value": 150675880249.888
+        },
+        {
+            "date": "2006-09-30",
+            "Stock Price": "2.872143",
+            "Number of Shares": "2.3633624E10",
+            "Market Capitalization": 67879147736.231995,
+            "- Cash & Cash Equivalents": 6392000000,
+            "+ Total Debt": 0,
+            "Enterprise Value": 61487147736.231995
+        },
+        {
+            "date": "2005-09-24",
+            "Stock Price": "2.028214",
+            "Number of Shares": "2.2636292E10",
+            "Market Capitalization": 45911244342.48801,
+            "- Cash & Cash Equivalents": 3491000000,
+            "+ Total Debt": 0,
+            "Enterprise Value": 42420244342.48801
+        },
+        {
+            "date": "2004-09-25",
+            "Stock Price": "0.849107",
+            "Number of Shares": "2.080904E10",
+            "Market Capitalization": 17669101527.28,
+            "- Cash & Cash Equivalents": 2969000000,
+            "+ Total Debt": 0,
+            "Enterprise Value": 14700101527.279999
+        },
+        {
+            "date": "2003-09-27",
+            "Stock Price": "0.403571",
+            "Number of Shares": "2.0195336E10",
+            "Market Capitalization": 8150251944.856,
+            "- Cash & Cash Equivalents": 3396000000,
+            "+ Total Debt": 304000000,
+            "Enterprise Value": 5058251944.856
+        },
+        {
+            "date": "2002-09-28",
+            "Stock Price": "0.27875",
+            "Number of Shares": "1.9881232E10",
+            "Market Capitalization": 5541893420,
+            "- Cash & Cash Equivalents": 2252000000,
+            "+ Total Debt": 316000000,
+            "Enterprise Value": 3605893420
+        },
+        {
+            "date": "2001-09-29",
+            "Stock Price": "0.314821",
+            "Number of Shares": "1.9354328E10",
+            "Market Capitalization": 6093148895.288,
+            "- Cash & Cash Equivalents": 2310000000,
+            "+ Total Debt": 317000000,
+            "Enterprise Value": 4100148895.288
+        },
+        {
+            "date": "2000-09-30",
+            "Stock Price": "0.344866",
+            "Number of Shares": "1.8175808E10",
+            "Market Capitalization": 6268218201.728,
+            "- Cash & Cash Equivalents": 1191000000,
+            "+ Total Debt": 300000000,
+            "Enterprise Value": 5377218201.728
+        },
+        {
+            "date": "1999-09-25",
+            "Stock Price": "0.665179",
+            "Number of Shares": "1.6033584E10",
+            "Market Capitalization": 10665203371.536,
+            "- Cash & Cash Equivalents": 1326000000,
+            "+ Total Debt": 300000000,
+            "Enterprise Value": 9639203371.536
+        },
+        {
+            "date": "1998-09-25",
+            "Stock Price": "0.316964",
+            "Number of Shares": "1.4781088E10",
+            "Market Capitalization": 4685072776.832001,
+            "- Cash & Cash Equivalents": 1481000000,
+            "+ Total Debt": 954000000,
+            "Enterprise Value": 4158072776.8320007
+        },
+        {
+            "date": "1997-09-26",
+            "Stock Price": "0.147879",
+            "Number of Shares": "1.4118944E10",
+            "Market Capitalization": 2087895319.7760003,
+            "- Cash & Cash Equivalents": 1230000000,
+            "+ Total Debt": 976000000,
+            "Enterprise Value": 1833895319.7760003
+        },
+        {
+            "date": "1996-09-27",
+            "Stock Price": "0.21875",
+            "Number of Shares": "1.3858208E10",
+            "Market Capitalization": 3031483000,
+            "- Cash & Cash Equivalents": 1552000000,
+            "+ Total Debt": 1135000000,
+            "Enterprise Value": 2614483000
+        },
+        {
+            "date": "1995-09-29",
+            "Stock Price": "0.310268",
+            "Number of Shares": "1.3781264E10",
+            "Market Capitalization": 4275885218.752,
+            "- Cash & Cash Equivalents": 756000000,
+            "+ Total Debt": 764000000,
+            "Enterprise Value": 4283885218.752
+        },
+        {
+            "date": "1994-09-30",
+            "Stock Price": "0.376116",
+            "Number of Shares": "1.329832E10",
+            "Market Capitalization": 5001710925.12,
+            "- Cash & Cash Equivalents": 1203488000,
+            "+ Total Debt": 596200000,
+            "Enterprise Value": 4394422925.12
+        },
+        {
+            "date": "1993-09-30",
+            "Stock Price": "0.274554",
+            "Number of Shares": "1.3107027027E10",
+            "Market Capitalization": 3598586698.3709583,
+            "- Cash & Cash Equivalents": 676400000,
+            "+ Total Debt": 823200000,
+            "Enterprise Value": 3745386698.3709583
+        },
+        {
+            "date": "1992-09-30",
+            "Stock Price": "0.46875",
+            "Number of Shares": "1.3687741935E10",
+            "Market Capitalization": 6416129032.03125,
+            "- Cash & Cash Equivalents": 498600000,
+            "+ Total Debt": 184500000,
+            "Enterprise Value": 6102029032.03125
+        },
+        {
+            "date": "1991-09-30",
+            "Stock Price": "0.444196",
+            "Number of Shares": "1.3448682171E10",
+            "Market Capitalization": 5973850825.629516,
+            "- Cash & Cash Equivalents": 604100000,
+            "+ Total Debt": 148600000,
+            "Enterprise Value": 5518350825.629516
+        },
+        {
+            "date": "1990-09-30",
+            "Stock Price": "0.271205",
+            "Number of Shares": "1.4071111111E10",
+            "Market Capitalization": 3816155688.8587546,
+            "- Cash & Cash Equivalents": 374700000,
+            "+ Total Debt": 122600000,
+            "Enterprise Value": 3564055688.8587546
+        },
+        {
+            "date": "1989-09-30",
+            "Stock Price": "0.408482",
+            "Number of Shares": "1.4363841808E10",
+            "Market Capitalization": 5867370829.415456,
+            "- Cash & Cash Equivalents": 438300000,
+            "+ Total Debt": 56800000,
+            "Enterprise Value": 5485870829.415456
+        },
+        {
+            "date": "1988-09-30",
+            "Stock Price": "0.34375",
+            "Number of Shares": "1.4556363636E10",
+            "Market Capitalization": 5003749999.875,
+            "- Cash & Cash Equivalents": 545700000,
+            "+ Total Debt": 127900000,
+            "Enterprise Value": 4585949999.875
+        },
+        {
+            "date": "1987-09-30",
+            "Stock Price": "0.344866",
+            "Number of Shares": "1.4674698795E10",
+            "Market Capitalization": 5060804674.63647,
+            "- Cash & Cash Equivalents": 565100000,
+            "+ Total Debt": 0,
+            "Enterprise Value": 4495704674.63647
+        },
+        {
+            "date": "1986-09-30",
+            "Stock Price": "0.152902",
+            "Number of Shares": "1.4373333333E10",
+            "Market Capitalization": 2197711413.2823663,
+            "- Cash & Cash Equivalents": 576200000,
+            "+ Total Debt": 0,
+            "Enterprise Value": 1621511413.2823663
+        },
+        {
+            "date": "1985-09-30",
+            "Stock Price": "0.084821",
+            "Number of Shares": "1.37088E10",
+            "Market Capitalization": 1162794124.8,
+            "- Cash & Cash Equivalents": 337000000,
+            "+ Total Debt": 0,
+            "Enterprise Value": 825794124.8
+        }
+    ]
+}

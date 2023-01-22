@@ -6,9 +6,11 @@ NOTE: Some code taken directly from their documentation. See: https://financialm
 """
 
 from urllib.request import urlopen
+import os
 import json, traceback
+import yfinance as yf
 
-
+# https://financialmodelingprep.com/api/v3/financials/income-statement/AAPL?apikey=d37f0d6c0868aba689aa989c5f87d658
 def get_api_url(requested_data, ticker, period, apikey):
     if period == 'annual':
         url = 'https://financialmodelingprep.com/api/v3/{requested_data}/{ticker}?apikey={apikey}'.format(
@@ -21,7 +23,7 @@ def get_api_url(requested_data, ticker, period, apikey):
     return url
 
 
-def get_jsonparsed_data(url):
+def get_jsonparsed_data(url,  ticker , requested_data,):
     """
     Fetch url, return parsed json. 
 
@@ -31,17 +33,28 @@ def get_jsonparsed_data(url):
     returns:
         parsed json
     """
-    try: response = urlopen(url)
-    except Exception as e:
-        print(f"Error retrieving {url}:")
-        try: print("\t%s"%e.read().decode())
-        except: pass
-        raise
-    data = response.read().decode('utf-8')
-    json_data = json.loads(data)
-    if "Error Message" in json_data:
-        raise ValueError("Error while requesting data from '{url}'. Error Message: '{err_msg}'.".format(
-            url=url, err_msg=json_data["Error Message"]))
+
+    fileName = requested_data+'-'+ticker+'.json'
+    if os.path.exists(fileName):
+        with open(fileName) as f:
+          json_data = json.load(f)
+    elif os.path.exists('financials/'+fileName):
+        with open('financials/'+fileName) as f:
+          json_data = json.load(f)
+    else :
+        try: response = urlopen(url)
+        except Exception as e:
+            print(f"Error retrieving {url}:")
+            try: print("\t%s"%e.read().decode())
+            except: pass
+            raise
+        data = response.read().decode('utf-8')
+        json_data = json.loads(data)
+        with open('financials/'+fileName, 'w', encoding='utf-8') as f:
+            json.dump(json_data, f, ensure_ascii=False, indent=4)
+        if "Error Message" in json_data:
+            raise ValueError("Error while requesting data from '{url}'. Error Message: '{err_msg}'.".format(
+                url=url, err_msg=json_data["Error Message"]))
     return json_data
 
 
@@ -55,7 +68,12 @@ def get_EV_statement(ticker, period='annual', apikey=''):
         parsed EV statement
     """
     url = get_api_url('enterprise-value', ticker=ticker, period=period, apikey=apikey)
-    return get_jsonparsed_data(url)
+    # with open('data/ev.json') as f:
+    #     jsondata = json.load(f)
+    jsondata = get_jsonparsed_data(url, ticker, 'enterprise-value')
+    # with open('data/ev.json', 'w', encoding='utf-8') as f:
+    #     json.dump(jsondata, f, ensure_ascii=False, indent=4)
+    return jsondata
 
 
 #! TODO: maybe combine these with argument flag for which statement, seems pretty redundant tbh
@@ -71,7 +89,11 @@ def get_income_statement(ticker, period='annual', apikey=''):
         parsed company's income statement
     """
     url = get_api_url('financials/income-statement', ticker=ticker, period=period, apikey=apikey)
-    return get_jsonparsed_data(url)
+    jsondata = get_jsonparsed_data(url,ticker,'financials/income-statement')
+    # with open('data/income.json', 'w', encoding='utf-8') as f:
+    #     json.dump(jsondata, f, ensure_ascii=False, indent=4)
+
+    return jsondata
 
 
 def get_cashflow_statement(ticker, period='annual', apikey=''):
@@ -86,7 +108,12 @@ def get_cashflow_statement(ticker, period='annual', apikey=''):
         parsed company's cashflow statement
     """
     url = get_api_url('financials/cash-flow-statement', ticker=ticker, period=period, apikey=apikey)
-    return get_jsonparsed_data(url)
+    # with open('data/cf.json') as f:
+    #     jsondata = json.load(f)
+    jsondata = get_jsonparsed_data(url, ticker,'financials/cash-flow-statement' )
+    # with open('data/cf.json', 'w', encoding='utf-8') as f:
+    #     json.dump(jsondata, f, ensure_ascii=False, indent=4)
+    return jsondata
 
 
 def get_balance_statement(ticker, period='annual', apikey=''):
@@ -100,8 +127,15 @@ def get_balance_statement(ticker, period='annual', apikey=''):
     returns:
         parsed company's balance sheet statement
     """
+
     url = get_api_url('financials/balance-sheet-statement', ticker=ticker, period=period, apikey=apikey)
-    return get_jsonparsed_data(url)
+
+    # with open(fileName) as f:
+    #     jsondata = json.load(f)
+    jsondata = get_jsonparsed_data(url, ticker , 'financials/balance-sheet-statement')
+    # with open('data/balance.json', 'w', encoding='utf-8') as f:
+    #     json.dump(jsondata, f, ensure_ascii=False, indent=4)
+    return jsondata
 
 
 def get_stock_price(ticker, apikey=''):
@@ -114,9 +148,13 @@ def get_stock_price(ticker, apikey=''):
     returns:
         {'symbol': ticker, 'price': price}
     """
-    url = 'https://financialmodelingprep.com/api/v3/stock/real-time-price/{ticker}?apikey={apikey}'.format(
-        ticker=ticker, apikey=apikey)
-    return get_jsonparsed_data(url)
+    # url = 'https://financialmodelingprep.com/api/v3/stock/real-time-price/{ticker}?apikey={apikey}'.format(
+    #     ticker=ticker, apikey=apikey)
+    stock_info = yf.Ticker(ticker).info
+    # stock_info.keys() for other properties you can explore
+    market_price = {}
+    market_price['price'] = stock_info['regularMarketPrice']
+    return market_price
 
 
 def get_batch_stock_prices(tickers, apikey=''):
@@ -129,6 +167,7 @@ def get_batch_stock_prices(tickers, apikey=''):
     returns:
         dict of {'ticker':  price}
     """
+     # prices = {'AAPL' : 137.87}
     prices = {}
     for ticker in tickers:
         prices[ticker] = get_stock_price(ticker=ticker, apikey=apikey)['price']
@@ -154,16 +193,20 @@ def get_historical_share_prices(ticker, dates, apikey=''):
             print(f"Error parsing '{date}' to date.")
             print(traceback.format_exc())
             continue
-        url = 'https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?from={date_start}&to={date_end}&apikey={apikey}'.format(
-            ticker=ticker, date_start=date_start, date_end=date_end, apikey=apikey)
-        try:
-            prices[date_end] = get_jsonparsed_data(url)['historical'][0]['close']
-        except IndexError:
-            #  RIP nested try catch, so many issues with dates just try a bunch and get within range of earnings release
-            try:
-                prices[date_start] = get_jsonparsed_data(url)['historical'][0]['close']
-            except IndexError:
-                print(date + ' ', get_jsonparsed_data(url))
+        # url = 'https://financialmodelingprep.com/api/v3/historical-price-full/{ticker}?from={date_start}&to={date_end}&apikey={apikey}'.format(
+        #     ticker=ticker, date_start=date_start, date_end=date_end, apikey=apikey)
+        prices = yf.download(ticker, start=date_start,
+                           end=date_end)
+
+        # try:
+        #     prices[date_end] = get_jsonparsed_data(url, ticker, 'historical-price-full')['historical'][0]['close']
+        #
+        # except IndexError:
+        #     #  RIP nested try catch, so many issues with dates just try a bunch and get within range of earnings release
+        #     try:
+        #         prices[date_start] = get_jsonparsed_data(url, ticker, 'historical-price-full')['historical'][0]['close']
+        #     except IndexError:
+        #         print(date + ' ', get_jsonparsed_data(url, ticker, 'historical-price-full'))
 
     return prices
 

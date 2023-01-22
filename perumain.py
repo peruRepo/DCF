@@ -48,12 +48,10 @@ def main(args):
         cond, dcfs = {'Ticker': [args.t]}, {}
         dcfs[args.t] = historical_DCF(args.t, args.y, args.p, args.d, args.eg, args.cg, args.pg, args.i, args.apikey)
 
-    # if args.y > 1:  # can't graph single timepoint very well....
-    #     visualize_bulk_historicals(dcfs, args.t, cond, args.apikey)
-    # else:
+    if args.y > 1:  # can't graph single timepoint very well....
+        visualize_bulk_historicals(dcfs, args.t, cond, args.apikey)
+    else:
         prettyprint(dcfs, args.y)
-    print("Current " + args.t + " Stock Price=" + str(get_stock_price(args.t)['price']));
-    prettyprint(dcfs, args.y)
 
 
 def run_setup(args, variable):
@@ -105,7 +103,7 @@ if __name__ == '__main__':
                         default='annual')
     parser.add_argument('--s', '--step_increase', help='specify step increase for EG, CG, PG to enable comparisons.',
                         type=float, default=0)
-    parser.add_argument('--steps', help='steps to take if --s is > 0', default=2)
+    parser.add_argument('--steps', help='steps to take if --s is > 0', default=5)
     parser.add_argument('--v', '--variable',
                         help='if --step_increase is specified, must specifiy variable to increase from: [earnings_growth_rate, discount_rate]',
                         default=None)

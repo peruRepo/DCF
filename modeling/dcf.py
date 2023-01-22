@@ -2,6 +2,8 @@ import argparse, traceback
 from decimal import Decimal
 
 from modeling.data import *
+import numpy as np
+from dateutil.parser import parse
 
 
 def DCF(ticker, ev_statement, income_statement, balance_statement, cashflow_statement, discount_rate, forecast, earnings_growth_rate, cap_ex_growth_rate, perpetual_growth_rate):
@@ -59,12 +61,12 @@ def historical_DCF(ticker, years, forecast, discount_rate, earnings_growth_rate,
     balance_statement = get_balance_statement(ticker = ticker, period = interval, apikey = apikey)['financials']
     cashflow_statement = get_cashflow_statement(ticker = ticker, period = interval, apikey = apikey)['financials']
     enterprise_value_statement = get_EV_statement(ticker = ticker, period = interval, apikey = apikey)['enterpriseValues']
-
+    calculate_avg_growth(cashflow_statement)
     if interval == 'quarter':
         intervals = years * 4
     else:
         intervals = years
-
+    # intervals = 1
     for interval in range(0, intervals):
         try:
             dcf = DCF(ticker, 
@@ -80,9 +82,8 @@ def historical_DCF(ticker, years, forecast, discount_rate, earnings_growth_rate,
         except (Exception, IndexError) as e:
             print(traceback.format_exc())
             print('Interval {} unavailable, no historical statement.'.format(interval)) # catch
-        else: dcfs[dcf['date']] = dcf 
+        else: dcfs[dcf['date']] = dcf
         print('-'*60)
-    
     return dcfs
 
 
@@ -164,7 +165,7 @@ def enterprise_value(income_statement, cashflow_statement, balance_statement, pe
     discount = discount_rate
 
     flows = []
-
+    print("earnings_growth_rate=",earnings_growth_rate)
     # Now let's iterate through years to calculate FCF, starting with most recent year
     print('Forecasting flows for {} years out, starting at {}.'.format(period, income_statement[0]['date']),
          ('\n         DFCF   |    EBIT   |    D&A    |    CWC     |   CAP_EX   | '))
@@ -196,4 +197,18 @@ def enterprise_value(income_statement, cashflow_statement, balance_statement, pe
     NPV_TV = TV/(1+discount)**(1+period)
 
     return NPV_TV+NPV_FCF
+
+def calculate_avg_growth(cashflow_statement):
+    financials = cashflow_statement
+    prev = 0.0
+    growthPC = []
+    for financial in reversed(financials):
+        if(parse(financial["date"]) > parse('2010-12-31')):
+            if (prev != 0.0):
+                growthPC.append((Decimal(financial["Free Cash Flow"]) - prev)/prev)
+            prev = Decimal(financial["Free Cash Flow"])
+    arr = np.array(growthPC)
+    convertedPC = arr.astype(np.float)
+    print("Average Free cashflow growth="+str(np.average(convertedPC)))
+
 
