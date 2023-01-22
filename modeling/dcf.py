@@ -38,9 +38,11 @@ def DCF(ticker, ev_statement, income_statement, balance_statement, cashflow_stat
 
     return {
         'date': income_statement[0]['date'],       # statement date used
-        'enterprise_value': enterprise_val,
-        'equity_value': equity_val,
-        'share_price': share_price
+        'Ticker' : ticker,
+        'earnings_growth_rate' : earnings_growth_rate, # earning growth used
+        # 'enterprise_value': enterprise_val,
+        # 'equity_value': equity_val,
+        'forecasted_share_price': share_price
     }
 
 
@@ -82,9 +84,10 @@ def historical_DCF(ticker, years, forecast, discount_rate, earnings_growth_rate,
         except (Exception, IndexError) as e:
             print(traceback.format_exc())
             print('Interval {} unavailable, no historical statement.'.format(interval)) # catch
-        else: dcfs[dcf['date']] = dcf
+        # else: dcfs[dcf['date']] = dcf
         print('-'*60)
-    return dcfs
+    # return dcfs
+    return dcf
 
 
 def ulFCF(ebit, tax_rate, non_cash_charges, cwc, cap_ex):
@@ -210,5 +213,19 @@ def calculate_avg_growth(cashflow_statement):
     arr = np.array(growthPC)
     convertedPC = arr.astype(np.float)
     print("Average Free cashflow growth="+str(np.average(convertedPC)))
+
+def calculate_avg_growth_from_ticker(ticker, interval, apikey):
+    financials = get_cashflow_statement(ticker = ticker, period = interval, apikey = apikey)['financials']
+    prev = 0.0
+    growthPC = []
+    for financial in reversed(financials):
+        if(parse(financial["date"]) > parse('2010-12-31')):
+            if (prev != 0.0):
+                growthPC.append((Decimal(financial["Free Cash Flow"]) - prev)/prev)
+            prev = Decimal(financial["Free Cash Flow"])
+    arr = np.array(growthPC)
+    convertedPC = arr.astype(np.float)
+    print("Average Free cashflow growth="+str(np.average(convertedPC)))
+    return np.average(convertedPC)
 
 

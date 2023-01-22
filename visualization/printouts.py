@@ -5,7 +5,7 @@ def prettyprint(dcfs, years):
     '''
     if years > 1:
         for k, v in dcfs.items():
-            print('ticker: {}'.format(k))
+            # print('ticker: {}'.format(k))
             if len(dcfs[k].keys()) > 1:
                 for yr, dcf in v.items():
                     print('date: {} \

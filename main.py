@@ -36,6 +36,8 @@ def main(args):
                 cond, dcfs = run_setup(args, variable='pg')
             elif args.v == 'discount_rate' or 'discount':
                 cond, dcfs = run_setup(args, variable='discount')
+            elif args.v == 'avg_earnings_growth_rate' or 'aeg':
+                cond, dcfs = run_setup(args, variable='aeg')
             # TODO: more dynamically  do this...potentially?
             else:
                 raise ValueError(
@@ -44,14 +46,23 @@ def main(args):
             # should  we just default to something?
             raise ValueError(
                 'If step (-- s) is > 0, you must specify the variable via --v. What was passed is invalid.')
+    elif args.aveg:
+        cond, dcfs = {'Ticker': [args.t]}, {}
+        aveg = calculate_avg_growth_from_ticker(args.t,args.i,args.apikey);
+        currentPrice = get_stock_price(args.t)['price'];
+        dcfs[1] = historical_DCF(args.t, args.y, args.p, args.d, aveg, args.cg, args.pg, args.i, args.apikey)
+        dcfs[1]['current_price'] = currentPrice
+        dcfs[2] = historical_DCF(args.t, args.y, args.p, args.d, args.eg, args.cg, args.pg, args.i, args.apikey)
+        dcfs[2]['current_price'] = currentPrice
     else:
         cond, dcfs = {'Ticker': [args.t]}, {}
         dcfs[args.t] = historical_DCF(args.t, args.y, args.p, args.d, args.eg, args.cg, args.pg, args.i, args.apikey)
 
+    #  Below code will give you plot
     # if args.y > 1:  # can't graph single timepoint very well....
     #     visualize_bulk_historicals(dcfs, args.t, cond, args.apikey)
     # else:
-        prettyprint(dcfs, args.y)
+    #     prettyprint(dcfs, args.y)
     print("Current " + args.t + " Stock Price=" + str(get_stock_price(args.t)['price']));
     prettyprint(dcfs, args.y)
 
@@ -111,6 +122,7 @@ if __name__ == '__main__':
                         default=None)
     parser.add_argument('--d', '--discount_rate', help='discount rate for future cash flow to firm', default=0.1)
     parser.add_argument('--eg', '--earnings_growth_rate', help='growth in revenue, YoY', type=float, default=.05)
+    parser.add_argument('--aveg', '--average_earnings_growth_rate', help='Calculate from average earning growth', type=bool, default=False)
     parser.add_argument('--cg', '--cap_ex_growth_rate', help='growth in cap_ex, YoY', type=float, default=0.045)
     parser.add_argument('--pg', '--perpetual_growth_rate', help='for perpetuity growth terminal value', type=float,
                         default=0.05)
