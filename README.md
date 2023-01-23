@@ -1,3 +1,22 @@
+# My Changes to the existing repo
+
+  **Added below Flag**
+
+ Argument              | Usage          
+----------------------- | ------------------
+--uf   --use_file              | This property allow the user to give more than one ticker
+--aveg  --average_earnings_growth_rate             | Use Average Free cash flow growth rate to forecast share price
+
+
+  **Removed Ability to plot graph**
+     I prefer output in excel to compare against multiple earning growth
+
+
+  
+    
+
+
+
 # DCF: Discounted Cash Flow
 
 If you notice any errors or have any questions/suggestions, please reach out! ***hughalessi@gmail.com*** 
