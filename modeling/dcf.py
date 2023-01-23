@@ -6,7 +6,7 @@ import numpy as np
 from dateutil.parser import parse
 
 
-def DCF(ticker, ev_statement, income_statement, balance_statement, cashflow_statement, discount_rate, forecast, earnings_growth_rate, cap_ex_growth_rate, perpetual_growth_rate):
+def DCF(ticker, ev_statement, income_statement, balance_statement, cashflow_statement, discount_rate, forecast, earnings_growth_rate, cap_ex_growth_rate, perpetual_growth_rate,givenEbit):
     """
     a very basic 2-stage DCF implemented for learning purposes.
     see enterprise_value() for details on arguments. 
@@ -26,7 +26,8 @@ def DCF(ticker, ev_statement, income_statement, balance_statement, cashflow_stat
                                         discount_rate,
                                         earnings_growth_rate, 
                                         cap_ex_growth_rate, 
-                                        perpetual_growth_rate)
+                                        perpetual_growth_rate,
+                                        givenEbit)
 
     equity_val, share_price = equity_value(enterprise_val,
                                            ev_statement)
@@ -46,7 +47,8 @@ def DCF(ticker, ev_statement, income_statement, balance_statement, cashflow_stat
     }
 
 
-def historical_DCF(ticker, years, forecast, discount_rate, earnings_growth_rate, cap_ex_growth_rate, perpetual_growth_rate, interval = 'annual', apikey = ''):
+def historical_DCF(ticker, years, forecast, discount_rate, earnings_growth_rate,
+                   cap_ex_growth_rate, perpetual_growth_rate, interval = 'annual', apikey = '', givenEbit= 0.0):
     """
     Wrap DCF to fetch DCF values over a historical timeframe, denoted period. 
 
@@ -80,7 +82,8 @@ def historical_DCF(ticker, years, forecast, discount_rate, earnings_growth_rate,
                     forecast, 
                     earnings_growth_rate,  
                     cap_ex_growth_rate, 
-                    perpetual_growth_rate)
+                    perpetual_growth_rate,
+                    givenEbit)
         except (Exception, IndexError) as e:
             print(traceback.format_exc())
             print('Interval {} unavailable, no historical statement.'.format(interval)) # catch
@@ -139,7 +142,8 @@ def equity_value(enterprise_value, enterprise_value_statement):
     return equity_val,  share_price
 
 
-def enterprise_value(income_statement, cashflow_statement, balance_statement, period, discount_rate, earnings_growth_rate, cap_ex_growth_rate, perpetual_growth_rate):
+def enterprise_value(income_statement, cashflow_statement, balance_statement, period,
+                     discount_rate, earnings_growth_rate, cap_ex_growth_rate, perpetual_growth_rate, givenEbit):
     """
     Calculate enterprise value by NPV of explicit _period_ free cash flows + NPV of terminal value,
     both discounted by W.A.C.C.
@@ -157,8 +161,13 @@ def enterprise_value(income_statement, cashflow_statement, balance_statement, pe
     # XXX: statements are returned as historical list, 0 most recent
     if income_statement[0]['EBIT']:
         ebit = float(income_statement[0]['EBIT'])
+    elif givenEbit != 0 :
+        ebit = givenEbit
+    # else:
+    #     ebit = float(input(f"EBIT missing. Enter EBIT on {income_statement[0]['date']} or skip: "))
     else:
-        ebit = float(input(f"EBIT missing. Enter EBIT on {income_statement[0]['date']} or skip: "))
+        raise Exception("EBIT is missing")
+
     tax_rate = float(income_statement[0]['Income Tax Expense']) /  \
                float(income_statement[0]['Earnings before Tax'])
     non_cash_charges = float(cashflow_statement[0]['Depreciation & Amortization'])

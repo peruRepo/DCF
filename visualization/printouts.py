@@ -1,3 +1,5 @@
+import json
+
 def prettyprint(dcfs, years):
     '''
     Pretty print-out results of a DCF query.
@@ -14,3 +16,7 @@ def prettyprint(dcfs, years):
         for k, v in dcfs.items():
             print('ticker: {}  \
                   \nvalue: {}'.format(k, v))
+
+def printResult(results):
+    jsonStr = json.dumps(results)
+    print(jsonStr)

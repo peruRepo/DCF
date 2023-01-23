@@ -34,12 +34,21 @@ def get_jsonparsed_data(url,  ticker , requested_data,):
         parsed json
     """
 
+    directory = ''
+    if(not os.environ.get('cache_dir') == '' ):
+        directory = os.environ.get('cache_dir')
     fileName = requested_data+'-'+ticker+'.json'
+
+
+    if (not fileName.startswith('financials')):
+        fileName = directory + 'financials/'+fileName
+    else :
+        fileName = directory + fileName
+
+
+
     if os.path.exists(fileName):
         with open(fileName) as f:
-          json_data = json.load(f)
-    elif os.path.exists('financials/'+fileName):
-        with open('financials/'+fileName) as f:
           json_data = json.load(f)
     else :
         try: response = urlopen(url)
@@ -50,7 +59,8 @@ def get_jsonparsed_data(url,  ticker , requested_data,):
             raise
         data = response.read().decode('utf-8')
         json_data = json.loads(data)
-        with open('financials/'+fileName, 'w', encoding='utf-8') as f:
+
+        with open(fileName, 'w', encoding='utf-8') as f:
             json.dump(json_data, f, ensure_ascii=False, indent=4)
         if "Error Message" in json_data:
             raise ValueError("Error while requesting data from '{url}'. Error Message: '{err_msg}'.".format(

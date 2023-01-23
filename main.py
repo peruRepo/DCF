@@ -18,6 +18,7 @@ from modeling.data import *
 from modeling.dcf import *
 from visualization.plot import *
 from visualization.printouts import *
+from utility.fileUtil import *
 
 
 def main(args):
@@ -25,7 +26,7 @@ def main(args):
     although the if statements are less than desirable, it allows rapid exploration of
     historical or present DCF values for either a single or list of tickers.
     """
-
+    result = []
     if args.s > 0:
         if args.v is not None:
             if args.v == 'eg' or 'earnings_growth_rate':
@@ -42,29 +43,58 @@ def main(args):
             else:
                 raise ValueError(
                     'args.variable is invalid, must choose (as of now) from this list -> [earnings_growth_rate, cap_ex_growth_rate, perpetual_growth_rate, discount')
+            result = dcfs
         else:
             # should  we just default to something?
             raise ValueError(
                 'If step (-- s) is > 0, you must specify the variable via --v. What was passed is invalid.')
+    elif args.uf:
+        inputLines = read_csv_file();
+        for input in inputLines:
+            try:
+                dcf = {}
+                cond, dcfs = {'Ticker': [input['ticker']]}, {}
+                aveg = calculate_avg_growth_from_ticker(input['ticker'],args.i,args.apikey)
+                currentPrice = get_stock_price(input['ticker'])['price']
+                dcfs[0] = historical_DCF(input['ticker'], args.y, args.p, args.d, aveg, args.cg, args.pg, args.i, args.apikey,input['ebit'])
+                dcfs[0]['current_price'] = currentPrice
+                dcfs[1] = historical_DCF(input['ticker'], args.y, args.p, args.d, args.eg, args.cg, args.pg, args.i, args.apikey,input['ebit'])
+                dcf = dcfs[0]
+                dcf['avg_growth'] = dcfs[0]['earnings_growth_rate']
+                dcf['forecasted_share_price_avg_growth'] = dcfs[0]['forecasted_share_price']
+                dcf['eg_growth'] = dcfs[1]['earnings_growth_rate']
+                dcf['forecasted_share_price_eg_growth'] = dcfs[1]['forecasted_share_price']
+                dcf.pop('earnings_growth_rate')
+                dcf.pop('forecasted_share_price')
+                result.append(dcf)
+            except (Exception, IndexError) as e:
+                print(e)
+                print("DCF calculation failed for"+input['ticker'])
+
     elif args.aveg:
         cond, dcfs = {'Ticker': [args.t]}, {}
         aveg = calculate_avg_growth_from_ticker(args.t,args.i,args.apikey);
         currentPrice = get_stock_price(args.t)['price'];
-        dcfs[1] = historical_DCF(args.t, args.y, args.p, args.d, aveg, args.cg, args.pg, args.i, args.apikey)
-        dcfs[1]['current_price'] = currentPrice
-        dcfs[2] = historical_DCF(args.t, args.y, args.p, args.d, args.eg, args.cg, args.pg, args.i, args.apikey)
-        dcfs[2]['current_price'] = currentPrice
+        dcfs[0] = historical_DCF(args.t, args.y, args.p, args.d, aveg, args.cg, args.pg, args.i, args.apikey)
+        dcfs[0]['current_price'] = currentPrice
+        dcfs[1] = historical_DCF(args.t, args.y, args.p, args.d, args.eg, args.cg, args.pg, args.i, args.apikey)
+        result[0] = dcfs[0]
+        result[0]['avg_growth'] = dcfs[0]['earnings_growth_rate']
+        result[0]['forecasted_share_price_avg_growth'] = dcfs[0]['forecasted_share_price']
+        result[0]['eg_growth'] = dcfs[1]['earnings_growth_rate']
+        result[0]['forecasted_share_price_eg_growth'] = dcfs[1]['forecasted_share_price']
     else:
         cond, dcfs = {'Ticker': [args.t]}, {}
         dcfs[args.t] = historical_DCF(args.t, args.y, args.p, args.d, args.eg, args.cg, args.pg, args.i, args.apikey)
-
+        result = dcfs
     #  Below code will give you plot
     # if args.y > 1:  # can't graph single timepoint very well....
     #     visualize_bulk_historicals(dcfs, args.t, cond, args.apikey)
     # else:
     #     prettyprint(dcfs, args.y)
-    print("Current " + args.t + " Stock Price=" + str(get_stock_price(args.t)['price']));
-    prettyprint(dcfs, args.y)
+    # print("Current " + args.t + " Stock Price=" + str(get_stock_price(args.t)['price']));
+    write_csv_file(result)
+    printResult(result)
 
 
 def run_setup(args, variable):
@@ -111,6 +141,8 @@ if __name__ == '__main__':
 
     parser.add_argument('--p', '--period', help='years to forecast', type=int, default=5)
     parser.add_argument('--t', '--ticker', help='pass a single ticker to do historical DCF', type=str, default='AAPL')
+    parser.add_argument('--uf', '--use_file', help='give file as input to calculate DCF', type=bool, default=False)
+
     parser.add_argument('--y', '--years', help='number of years to compute DCF analysis for', type=int, default=1)
     parser.add_argument('--i', '--interval', help='interval period for each calc, either "annual" or "quarter"',
                         default='annual')
@@ -120,12 +152,12 @@ if __name__ == '__main__':
     parser.add_argument('--v', '--variable',
                         help='if --step_increase is specified, must specifiy variable to increase from: [earnings_growth_rate, discount_rate]',
                         default=None)
-    parser.add_argument('--d', '--discount_rate', help='discount rate for future cash flow to firm', default=0.1)
+    parser.add_argument('--d', '--discount_rate', help='discount rate for future cash flow to firm', default=0.10)
     parser.add_argument('--eg', '--earnings_growth_rate', help='growth in revenue, YoY', type=float, default=.05)
     parser.add_argument('--aveg', '--average_earnings_growth_rate', help='Calculate from average earning growth', type=bool, default=False)
-    parser.add_argument('--cg', '--cap_ex_growth_rate', help='growth in cap_ex, YoY', type=float, default=0.045)
+    parser.add_argument('--cg', '--cap_ex_growth_rate', help='growth in cap_ex, YoY', type=float, default=0.05)
     parser.add_argument('--pg', '--perpetual_growth_rate', help='for perpetuity growth terminal value', type=float,
-                        default=0.05)
+                        default=0.025)
     parser.add_argument('--apikey', help='API key for financialmodelingprep.com', default=os.environ.get('APIKEY'))
 
     args = parser.parse_args()
