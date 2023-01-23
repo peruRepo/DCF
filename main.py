@@ -55,11 +55,13 @@ def main(args):
                 dcf = {}
                 cond, dcfs = {'Ticker': [input['ticker']]}, {}
                 aveg = calculate_avg_growth_from_ticker(input['ticker'],args.i,args.apikey)
+                avcg = calculate_avg_capitol_exp_from_ticker(input['ticker'], args.i, args.apikey)
                 currentPrice = get_stock_price(input['ticker'])['price']
-                dcfs[0] = historical_DCF(input['ticker'], args.y, args.p, args.d, aveg, args.cg, args.pg, args.i, args.apikey,input['ebit'])
+                dcfs[0] = historical_DCF(input['ticker'], args.y, args.p, args.d, aveg, avcg, args.pg, args.i, args.apikey,input['ebit'])
                 dcfs[0]['current_price'] = currentPrice
                 dcfs[1] = historical_DCF(input['ticker'], args.y, args.p, args.d, args.eg, args.cg, args.pg, args.i, args.apikey,input['ebit'])
                 dcf = dcfs[0]
+                dcf['avg_capex'] = avcg
                 dcf['avg_growth'] = dcfs[0]['earnings_growth_rate']
                 dcf['forecasted_share_price_avg_growth'] = dcfs[0]['forecasted_share_price']
                 dcf['eg_growth'] = dcfs[1]['earnings_growth_rate']
@@ -73,16 +75,22 @@ def main(args):
 
     elif args.aveg:
         cond, dcfs = {'Ticker': [args.t]}, {}
-        aveg = calculate_avg_growth_from_ticker(args.t,args.i,args.apikey);
-        currentPrice = get_stock_price(args.t)['price'];
-        dcfs[0] = historical_DCF(args.t, args.y, args.p, args.d, aveg, args.cg, args.pg, args.i, args.apikey)
+        aveg = calculate_avg_growth_from_ticker(args.t, args.i, args.apikey)
+        avcg = calculate_avg_capitol_exp_from_ticker(args.t, args.i, args.apikey)
+        currentPrice = get_stock_price(args.t)['price']
+        dcfs[0] = historical_DCF(args.t, args.y, args.p, args.d, aveg, avcg, args.pg, args.i, args.apikey)
         dcfs[0]['current_price'] = currentPrice
-        dcfs[1] = historical_DCF(args.t, args.y, args.p, args.d, args.eg, args.cg, args.pg, args.i, args.apikey)
-        result[0] = dcfs[0]
-        result[0]['avg_growth'] = dcfs[0]['earnings_growth_rate']
-        result[0]['forecasted_share_price_avg_growth'] = dcfs[0]['forecasted_share_price']
-        result[0]['eg_growth'] = dcfs[1]['earnings_growth_rate']
-        result[0]['forecasted_share_price_eg_growth'] = dcfs[1]['forecasted_share_price']
+        dcfs[1] = historical_DCF(args.t, args.y, args.p, args.d, args.eg, args.cg, args.pg, args.i,
+                                 args.apikey)
+        dcf = dcfs[0]
+        dcf['avg_capex'] = avcg
+        dcf['avg_growth'] = dcfs[0]['earnings_growth_rate']
+        dcf['forecasted_share_price_avg_growth'] = dcfs[0]['forecasted_share_price']
+        dcf['eg_growth'] = dcfs[1]['earnings_growth_rate']
+        dcf['forecasted_share_price_eg_growth'] = dcfs[1]['forecasted_share_price']
+        dcf.pop('earnings_growth_rate')
+        dcf.pop('forecasted_share_price')
+        result.append(dcf)
     else:
         cond, dcfs = {'Ticker': [args.t]}, {}
         dcfs[args.t] = historical_DCF(args.t, args.y, args.p, args.d, args.eg, args.cg, args.pg, args.i, args.apikey)
@@ -152,7 +160,7 @@ if __name__ == '__main__':
     parser.add_argument('--v', '--variable',
                         help='if --step_increase is specified, must specifiy variable to increase from: [earnings_growth_rate, discount_rate]',
                         default=None)
-    parser.add_argument('--d', '--discount_rate', help='discount rate for future cash flow to firm', default=0.10)
+    parser.add_argument('--d', '--discount_rate', help='discount rate for future cash flow to firm',type=float, default=0.10)
     parser.add_argument('--eg', '--earnings_growth_rate', help='growth in revenue, YoY', type=float, default=.05)
     parser.add_argument('--aveg', '--average_earnings_growth_rate', help='Calculate from average earning growth', type=bool, default=False)
     parser.add_argument('--cg', '--cap_ex_growth_rate', help='growth in cap_ex, YoY', type=float, default=0.05)

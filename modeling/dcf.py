@@ -107,7 +107,9 @@ def ulFCF(ebit, tax_rate, non_cash_charges, cwc, cap_ex):
     returns:
         unlevered free cash flow
     """
-    return ebit * (1-tax_rate) + non_cash_charges + cwc + cap_ex
+
+    return ebit * (1-tax_rate) + abs(non_cash_charges) - abs(cwc) - abs(cap_ex)
+    # return ebit * (1 - tax_rate) + non_cash_charges + cwc + cap_ex
 
 
 def get_discount_rate():
@@ -185,9 +187,10 @@ def enterprise_value(income_statement, cashflow_statement, balance_statement, pe
 
         # increment each value by growth rate
         ebit = ebit * (1 + (yr * earnings_growth_rate))
+        # non_cash_charges = non_cash_charges * (1 + (yr * earnings_growth_rate))
         non_cash_charges = non_cash_charges * (1 + (yr * earnings_growth_rate))
         cwc = cwc * 0.7                             # TODO: evaluate this cwc rate? 0.1 annually?
-        cap_ex = cap_ex * (1 + (yr * cap_ex_growth_rate))         
+        cap_ex = cap_ex * (1 + (yr * cap_ex_growth_rate))
 
         # discount by WACC
         flow = ulFCF(ebit, tax_rate, non_cash_charges, cwc, cap_ex)
@@ -210,6 +213,16 @@ def enterprise_value(income_statement, cashflow_statement, balance_statement, pe
 
     return NPV_TV+NPV_FCF
 
+def enterprise_value_from_free_cash_flow(income_statement, cashflow_statement, balance_statement, period,
+                     discount_rate, earnings_growth_rate, cap_ex_growth_rate, perpetual_growth_rate, givenEbit):
+
+
+    # final_cashflow = flows[-1] * (1 + perpetual_growth_rate)
+    # TV = final_cashflow/(discount - perpetual_growth_rate)
+    # NPV_TV = TV/(1+discount)**(1+period)
+
+    return 0
+
 def calculate_avg_growth(cashflow_statement):
     financials = cashflow_statement
     prev = 0.0
@@ -225,16 +238,48 @@ def calculate_avg_growth(cashflow_statement):
 
 def calculate_avg_growth_from_ticker(ticker, interval, apikey):
     financials = get_cashflow_statement(ticker = ticker, period = interval, apikey = apikey)['financials']
+    # financials = get_income_statement(ticker=ticker, period=interval, apikey=apikey)['financials']
+    #
     prev = 0.0
     growthPC = []
     for financial in reversed(financials):
-        if(parse(financial["date"]) > parse('2010-12-31')):
+        if(parse(financial["date"]) > parse('2010-01-01')):
             if (prev != 0.0):
-                growthPC.append((Decimal(financial["Free Cash Flow"]) - prev)/prev)
+                # if Decimal(financial["Free Cash Flow"]) < 0 or prev < 0:
+                #     growth = (abs(Decimal(financial["Free Cash Flow"])) - abs(prev)) / abs(prev)
+                #     if(growth > 0) :
+                #         growth =  -1 * growth
+                #     growthPC.append(growth)
+                # else:
+                    growthPC.append((Decimal(financial["Free Cash Flow"]) - prev)/prev)
             prev = Decimal(financial["Free Cash Flow"])
     arr = np.array(growthPC)
     convertedPC = arr.astype(np.float)
     print("Average Free cashflow growth="+str(np.average(convertedPC)))
     return np.average(convertedPC)
+
+
+def calculate_avg_capitol_exp_from_ticker(ticker, interval, apikey):
+    financials = get_cashflow_statement(ticker = ticker, period = interval, apikey = apikey)['financials']
+    prev = 0.0
+    growthPC = []
+    for financial in reversed(financials):
+        if(parse(financial["date"]) > parse('2010-01-01')):
+
+            if (prev != 0.0):
+                if (Decimal(financial["Capital Expenditure"]) < 0) or prev < 0:
+                    growth = (abs(Decimal(financial["Capital Expenditure"])) - abs(prev)) / abs(prev)
+                    if (growth > 0):
+                        growth = -1 * growth
+                    growthPC.append(growth)
+                else:
+                    growthPC.append((Decimal(financial["Capital Expenditure"]) - prev) / prev)
+            prev = Decimal(financial["Capital Expenditure"])
+    arr = np.array(growthPC)
+    convertedPC = arr.astype(np.float)
+    print("Average CapEx growth="+str(np.average(convertedPC)))
+
+
+
 
 

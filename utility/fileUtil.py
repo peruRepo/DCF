@@ -12,7 +12,7 @@ def read_csv_file():
 
 def write_csv_file(dcf):
     filename = "output.csv"
-    fields = ['date', 'Ticker', 'current_price', 'avg_growth', 'forecasted_share_price_avg_growth',
+    fields = ['date', 'Ticker', 'current_price', 'avg_growth', 'avg_capex','forecasted_share_price_avg_growth',
   'eg_growth','forecasted_share_price_eg_growth']
     # writing to csv file
     with open(filename, 'w') as csvfile:
