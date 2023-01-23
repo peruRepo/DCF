@@ -65,7 +65,6 @@ def historical_DCF(ticker, years, forecast, discount_rate, earnings_growth_rate,
     balance_statement = get_balance_statement(ticker = ticker, period = interval, apikey = apikey)['financials']
     cashflow_statement = get_cashflow_statement(ticker = ticker, period = interval, apikey = apikey)['financials']
     enterprise_value_statement = get_EV_statement(ticker = ticker, period = interval, apikey = apikey)['enterpriseValues']
-    calculate_avg_growth(cashflow_statement)
     if interval == 'quarter':
         intervals = years * 4
     else:
@@ -238,46 +237,41 @@ def calculate_avg_growth(cashflow_statement):
 
 def calculate_avg_growth_from_ticker(ticker, interval, apikey):
     financials = get_cashflow_statement(ticker = ticker, period = interval, apikey = apikey)['financials']
-    # financials = get_income_statement(ticker=ticker, period=interval, apikey=apikey)['financials']
-    #
-    prev = 0.0
-    growthPC = []
+    starting_value = 0
+    end_value = float(0)
+    starting_year = 0
     for financial in reversed(financials):
         if(parse(financial["date"]) > parse('2010-01-01')):
-            if (prev != 0.0):
-                # if Decimal(financial["Free Cash Flow"]) < 0 or prev < 0:
-                #     growth = (abs(Decimal(financial["Free Cash Flow"])) - abs(prev)) / abs(prev)
-                #     if(growth > 0) :
-                #         growth =  -1 * growth
-                #     growthPC.append(growth)
-                # else:
-                    growthPC.append((Decimal(financial["Free Cash Flow"]) - prev)/prev)
-            prev = Decimal(financial["Free Cash Flow"])
-    arr = np.array(growthPC)
-    convertedPC = arr.astype(np.float)
-    print("Average Free cashflow growth="+str(np.average(convertedPC)))
-    return np.average(convertedPC)
+            if(starting_value == 0.0):
+                starting_value = float(financial["Free Cash Flow"])
+                starting_year = parse(financial["date"]).year
+            end_value = end_value + float(financial["Free Cash Flow"])
+            end_year = parse(financial["date"]).year
+
+    calc_year = end_year - starting_year
+    cagr =  abs(((end_value /starting_value) ** (1/calc_year))) - 1
+    print("Average Free CashFlow Growth="+str(cagr))
+    return cagr;
 
 
 def calculate_avg_capitol_exp_from_ticker(ticker, interval, apikey):
     financials = get_cashflow_statement(ticker = ticker, period = interval, apikey = apikey)['financials']
     prev = 0.0
-    growthPC = []
+    starting_value = 0
+    end_value = float(0)
+    starting_year = 0
     for financial in reversed(financials):
         if(parse(financial["date"]) > parse('2010-01-01')):
+            if(starting_value == 0.0):
+                starting_value = float(financial["Capital Expenditure"])
+                starting_year = parse(financial["date"]).year
+            end_value = end_value + float(financial["Capital Expenditure"])
+            end_year = parse(financial["date"]).year
 
-            if (prev != 0.0):
-                if (Decimal(financial["Capital Expenditure"]) < 0) or prev < 0:
-                    growth = (abs(Decimal(financial["Capital Expenditure"])) - abs(prev)) / abs(prev)
-                    if (growth > 0):
-                        growth = -1 * growth
-                    growthPC.append(growth)
-                else:
-                    growthPC.append((Decimal(financial["Capital Expenditure"]) - prev) / prev)
-            prev = Decimal(financial["Capital Expenditure"])
-    arr = np.array(growthPC)
-    convertedPC = arr.astype(np.float)
-    print("Average CapEx growth="+str(np.average(convertedPC)))
+    calc_year = end_year - starting_year
+    cagr =  abs(((end_value /starting_value) ** (1/calc_year))) - 1
+    print("Average CapEx Growth=" + str(cagr))
+    return cagr;
 
 
 
