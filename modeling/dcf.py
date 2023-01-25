@@ -4,7 +4,7 @@ from decimal import Decimal
 from modeling.data import *
 import numpy as np
 from dateutil.parser import parse
-
+from modeling.AverageUtil import *
 
 def DCF(ticker, ev_statement, income_statement, balance_statement, cashflow_statement, discount_rate, forecast, earnings_growth_rate, cap_ex_growth_rate, perpetual_growth_rate,givenEbit):
     """
@@ -74,9 +74,9 @@ def historical_DCF(ticker, years, forecast, discount_rate, earnings_growth_rate,
         try:
             dcf = DCF(ticker, 
                     enterprise_value_statement[interval],
-                    income_statement[interval:interval+2],        # pass year + 1 bc we need change in working capital
-                    balance_statement[interval:interval+2],
-                    cashflow_statement[interval:interval+2],
+                    income_statement[interval+2:interval+4],        # pass year + 1 bc we need change in working capital
+                    balance_statement[interval+2:interval+4],
+                    cashflow_statement[interval+2:interval+4],
                     discount_rate,
                     forecast, 
                     earnings_growth_rate,  
@@ -160,6 +160,7 @@ def enterprise_value(income_statement, cashflow_statement, balance_statement, pe
         enterprise value
     """
     # XXX: statements are returned as historical list, 0 most recent
+    # income_statement = find_average_each_element(income_statement);
     if income_statement[0]['EBIT']:
         ebit = float(income_statement[0]['EBIT'])
     elif givenEbit != 0 :
@@ -211,25 +212,11 @@ def enterprise_value(income_statement, cashflow_statement, balance_statement, pe
     # now calculate terminal value using perpetual growth rate
     final_cashflow = flows[-1] * (1 + perpetual_growth_rate)
     TV = final_cashflow/(discount - perpetual_growth_rate)
-    # Verify
-
-    # NPV_TV = TV/(1+discount)**(1+period)
     NPV_TV = TV / (1 + discount) ** (1 + period)
     return NPV_TV+NPV_FCF
-    # New Present Value (NPV) equivalent of Terminal Value (TV)
-    #  Ref https://www.youtube.com/watch?v=lZzg8lPCY3g
-    # i = 1
-    # pv_flow = []
-    # for flow in flows:
-    #    pv_flow.append(flow/(1+discount)**i)
-    #    i = i + 1
-    #
-    # final_pv_for_flow = TV * (1 + perpetual_growth_rate)
-    # final_tv_for_pv_for_flow = final_pv_for_flow/(discount - perpetual_growth_rate)
-    #
-    # sum_pv_flow = sum(pv_flow)
-    #
-    # return final_tv_for_pv_for_flow + sum_pv_flow
+
+
+
 
 def enterprise_value_from_free_cash_flow(income_statement, cashflow_statement, balance_statement, period,
                      discount_rate, earnings_growth_rate, cap_ex_growth_rate, perpetual_growth_rate, givenEbit):
@@ -285,6 +272,7 @@ def calculate_avg_growth_from_ticker(ticker, interval, apikey):
                 # else:
                     growthPC.append((float(financial["Free Cash Flow"]) - prev)/prev)
             prev = float(financial["Free Cash Flow"])
+            print(str(float(financial["Free Cash Flow"])))
     a = sum(growthPC)
     b = len(growthPC)
     avg = a/b;
@@ -300,6 +288,7 @@ def calculate_avg_capitol_exp_from_ticker(ticker, interval, apikey):
             if (prev != 0.0):
                 growthPC.append((float(financial["Capital Expenditure"]) - prev) / prev)
             prev = float(financial["Capital Expenditure"])
+            print(str(float(financial["Capital Expenditure"])))
     a = sum(growthPC)
     b = len(growthPC)
     avg = sum(growthPC) / len(growthPC)
