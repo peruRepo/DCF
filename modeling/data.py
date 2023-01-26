@@ -160,10 +160,12 @@ def get_stock_price(ticker, apikey=''):
     """
     # url = 'https://financialmodelingprep.com/api/v3/stock/real-time-price/{ticker}?apikey={apikey}'.format(
     #     ticker=ticker, apikey=apikey)
-    stock_info = yf.Ticker(ticker).info
+    # stock_info = yf.Ticker(ticker).info
+    # cf = yf.Ticker(ticker).cashflow
     # stock_info.keys() for other properties you can explore
     market_price = {}
-    market_price['price'] = stock_info['regularMarketPrice']
+    # market_price['price'] = stock_info['regularMarketPrice']
+    market_price['price'] = float(0)
     return market_price
 
 

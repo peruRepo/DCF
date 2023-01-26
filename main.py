@@ -57,9 +57,9 @@ def main(args):
                 aveg = calculate_avg_growth_from_ticker(input['ticker'],args.i,args.apikey)
                 avcg = calculate_avg_capitol_exp_from_ticker(input['ticker'], args.i, args.apikey)
                 currentPrice = get_stock_price(input['ticker'])['price']
-                dcfs[0] = historical_DCF(input['ticker'], args.y, args.p, args.d, aveg, avcg, args.pg, args.i, args.apikey,input['ebit'])
+                dcfs[0] = historical_DCF(input['ticker'], args.y, args.p, args.d, aveg, avcg, args.pg, args.i, args.apikey,input['ebit'],args.uavg)
                 dcfs[0]['current_price'] = currentPrice
-                dcfs[1] = historical_DCF(input['ticker'], args.y, args.p, args.d, args.eg, args.cg, args.pg, args.i, args.apikey,input['ebit'])
+                dcfs[1] = historical_DCF(input['ticker'], args.y, args.p, args.d, args.eg, args.cg, args.pg, args.i, args.apikey,input['ebit'],args.uavg)
                 dcf = dcfs[0]
                 dcf['avg_capex'] = avcg
                 dcf['avg_growth'] = dcfs[0]['earnings_growth_rate']
@@ -150,7 +150,7 @@ if __name__ == '__main__':
     parser.add_argument('--p', '--period', help='years to forecast', type=int, default=5)
     parser.add_argument('--t', '--ticker', help='pass a single ticker to do historical DCF', type=str, default='AAPL')
     parser.add_argument('--uf', '--use_file', help='give file as input to calculate DCF', type=bool, default=False)
-
+    parser.add_argument('--uavg', '--use_avg', help='Whether to use average statement values as last occurance to calculate DCF', type=bool, default=False)
     parser.add_argument('--y', '--years', help='number of years to compute DCF analysis for', type=int, default=1)
     parser.add_argument('--i', '--interval', help='interval period for each calc, either "annual" or "quarter"',
                         default='annual')

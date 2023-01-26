@@ -6,7 +6,8 @@ import numpy as np
 from dateutil.parser import parse
 from modeling.AverageUtil import *
 
-def DCF(ticker, ev_statement, income_statement, balance_statement, cashflow_statement, discount_rate, forecast, earnings_growth_rate, cap_ex_growth_rate, perpetual_growth_rate,givenEbit):
+def DCF(ticker, ev_statement, income_statement, balance_statement, cashflow_statement, discount_rate,
+        forecast, earnings_growth_rate, cap_ex_growth_rate, perpetual_growth_rate,givenEbit, useAverage):
     """
     a very basic 2-stage DCF implemented for learning purposes.
     see enterprise_value() for details on arguments. 
@@ -27,7 +28,8 @@ def DCF(ticker, ev_statement, income_statement, balance_statement, cashflow_stat
                                         earnings_growth_rate, 
                                         cap_ex_growth_rate, 
                                         perpetual_growth_rate,
-                                        givenEbit)
+                                        givenEbit,
+                                        useAverage)
 
     equity_val, share_price = equity_value(enterprise_val,
                                            ev_statement)
@@ -48,7 +50,7 @@ def DCF(ticker, ev_statement, income_statement, balance_statement, cashflow_stat
 
 
 def historical_DCF(ticker, years, forecast, discount_rate, earnings_growth_rate,
-                   cap_ex_growth_rate, perpetual_growth_rate, interval = 'annual', apikey = '', givenEbit= 0.0):
+                   cap_ex_growth_rate, perpetual_growth_rate, interval = 'annual', apikey = '', givenEbit= 0.0, useAverage=False):
     """
     Wrap DCF to fetch DCF values over a historical timeframe, denoted period. 
 
@@ -74,15 +76,16 @@ def historical_DCF(ticker, years, forecast, discount_rate, earnings_growth_rate,
         try:
             dcf = DCF(ticker, 
                     enterprise_value_statement[interval],
-                    income_statement[interval+2:interval+4],        # pass year + 1 bc we need change in working capital
-                    balance_statement[interval+2:interval+4],
-                    cashflow_statement[interval+2:interval+4],
+                    income_statement[interval:interval+10],        # pass year + 1 bc we need change in working capital
+                    balance_statement[interval:interval+10],
+                    cashflow_statement[interval:interval+10],
                     discount_rate,
                     forecast, 
                     earnings_growth_rate,  
                     cap_ex_growth_rate, 
                     perpetual_growth_rate,
-                    givenEbit)
+                    givenEbit,
+                      useAverage)
         except (Exception, IndexError) as e:
             print(traceback.format_exc())
             print('Interval {} unavailable, no historical statement.'.format(interval)) # catch
@@ -144,7 +147,7 @@ def equity_value(enterprise_value, enterprise_value_statement):
 
 
 def enterprise_value(income_statement, cashflow_statement, balance_statement, period,
-                     discount_rate, earnings_growth_rate, cap_ex_growth_rate, perpetual_growth_rate, givenEbit):
+                     discount_rate, earnings_growth_rate, cap_ex_growth_rate, perpetual_growth_rate, givenEbit, useAverage):
     """
     Calculate enterprise value by NPV of explicit _period_ free cash flows + NPV of terminal value,
     both discounted by W.A.C.C.
@@ -160,29 +163,48 @@ def enterprise_value(income_statement, cashflow_statement, balance_statement, pe
         enterprise value
     """
     # XXX: statements are returned as historical list, 0 most recent
-    # income_statement = find_average_each_element(income_statement);
-    if income_statement[0]['EBIT']:
-        ebit = float(income_statement[0]['EBIT'])
-    elif givenEbit != 0 :
-        ebit = givenEbit
-    # else:
-    #     ebit = float(input(f"EBIT missing. Enter EBIT on {income_statement[0]['date']} or skip: "))
-    else:
-        raise Exception("EBIT is missing")
+    income_statement = find_average_each_element(income_statement);
+    cashflow_statement = find_average_each_element(cashflow_statement);
+    balance_statement = find_average_each_element(balance_statement);
+    if(useAverage):
+        if income_statement[-1]['EBIT']:
+            ebit = float(income_statement[-1]['EBIT'])
+        elif givenEbit != 0:
+            ebit = givenEbit
+        else:
+            raise Exception("EBIT is missing")
 
-    tax_rate = float(income_statement[0]['Income Tax Expense']) /  \
-               float(income_statement[0]['Earnings before Tax'])
-    non_cash_charges = float(cashflow_statement[0]['Depreciation & Amortization'])
-    cwc = (float(balance_statement[0]['Total assets']) - float(balance_statement[0]['Total non-current assets'])) - \
-          (float(balance_statement[1]['Total assets']) - float(balance_statement[1]['Total non-current assets']))
-    cap_ex = float(cashflow_statement[0]['Capital Expenditure'])
-    discount = discount_rate
+        tax_rate = float(income_statement[-1]['Income Tax Expense']) / \
+                   float(income_statement[-1]['Earnings before Tax'])
+        non_cash_charges = float(cashflow_statement[-1]['Depreciation & Amortization'])
+        cwc = (float(balance_statement[-1]['Total assets']) - float(balance_statement[-1]['Total non-current assets'])) - \
+            (float(balance_statement[0]['Total assets']) - float(balance_statement[0]['Total non-current assets']))
+        cap_ex = float(cashflow_statement[-1]['Capital Expenditure'])
+        discount = discount_rate
+    else:
+        if income_statement[0]['EBIT']:
+            ebit = float(income_statement[0]['EBIT'])
+        elif givenEbit != 0 :
+            ebit = givenEbit
+        # else:
+        #     ebit = float(input(f"EBIT missing. Enter EBIT on {income_statement[0]['date']} or skip: "))
+        else:
+            raise Exception("EBIT is missing")
+
+        tax_rate = float(income_statement[0]['Income Tax Expense']) /  \
+                   float(income_statement[0]['Earnings before Tax'])
+        non_cash_charges = float(cashflow_statement[0]['Depreciation & Amortization'])
+        cwc = (float(balance_statement[0]['Total assets']) - float(balance_statement[0]['Total non-current assets'])) - \
+              (float(balance_statement[1]['Total assets']) - float(balance_statement[1]['Total non-current assets']))
+        cap_ex = float(cashflow_statement[0]['Capital Expenditure'])
+        discount = discount_rate
 
     flows = []
     print("earnings_growth_rate=",earnings_growth_rate)
     # Now let's iterate through years to calculate FCF, starting with most recent year
     print('Forecasting flows for {} years out, starting at {}.'.format(period, income_statement[0]['date']),
          ('\n         DFCF   |    EBIT   |    D&A    |    CWC     |   CAP_EX   | '))
+    skip_count = 0
     for yr in range(1, period+1):    
 
         # increment each value by growth rate
@@ -198,6 +220,9 @@ def enterprise_value(income_statement, cashflow_statement, balance_statement, pe
         flow = ulFCF(ebit, tax_rate, non_cash_charges, cwc, cap_ex)
         # Verify
         PV_flow = flow/((1 + discount)**yr)
+        skip_count = skip_count + 1;
+        # skip until 2022
+        # if(skip_count > 2):
         flows.append(PV_flow)
 
         print(str(int(income_statement[0]['date'][0:4]) + yr) + '  ',
@@ -272,7 +297,6 @@ def calculate_avg_growth_from_ticker(ticker, interval, apikey):
                 # else:
                     growthPC.append((float(financial["Free Cash Flow"]) - prev)/prev)
             prev = float(financial["Free Cash Flow"])
-            print(str(float(financial["Free Cash Flow"])))
     a = sum(growthPC)
     b = len(growthPC)
     avg = a/b;
@@ -288,7 +312,6 @@ def calculate_avg_capitol_exp_from_ticker(ticker, interval, apikey):
             if (prev != 0.0):
                 growthPC.append((float(financial["Capital Expenditure"]) - prev) / prev)
             prev = float(financial["Capital Expenditure"])
-            print(str(float(financial["Capital Expenditure"])))
     a = sum(growthPC)
     b = len(growthPC)
     avg = sum(growthPC) / len(growthPC)
