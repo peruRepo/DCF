@@ -177,8 +177,8 @@ def get_stock_price(ticker, apikey=''):
     # for index, row in df.iterrows():
     #     market_price['price']  = row['Close']
     market_price = {}
-    stock_info = yf.Ticker(ticker).info
-    market_price['price'] = stock_info['regularMarketPrice']
+    stock_info = yf.Ticker(ticker).fast_info
+    market_price['price'] = stock_info['last_price']
     # market_price['price'] = float(0)
     return market_price
 
