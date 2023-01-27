@@ -57,9 +57,15 @@ def main(args):
                 aveg = calculate_avg_growth_from_ticker(input['ticker'],args.i,args.apikey)
                 avcg = calculate_avg_capitol_exp_from_ticker(input['ticker'], args.i, args.apikey)
                 currentPrice = get_stock_price(input['ticker'])['price']
-                dcfs[0] = historical_DCF(input['ticker'], args.y, args.p, args.d, aveg, avcg, args.pg, args.i, args.apikey,input['ebit'],args.uavg)
+                dcfs[0] = historical_DCF(input['ticker'], args.y, args.p, args.d, aveg, avcg, args.pg, args.i, args.apikey,0,args.uavg)
                 dcfs[0]['current_price'] = currentPrice
-                dcfs[1] = historical_DCF(input['ticker'], args.y, args.p, args.d, args.eg, args.cg, args.pg, args.i, args.apikey,input['ebit'],args.uavg)
+                if input['AvgGrowth'] != '' and input['CapExGrowth']:
+                    givenAvgGrowth = float(input['AvgGrowth'])
+                    givenCapEx = float(input['CapExGrowth'])
+                else :
+                    givenAvgGrowth = args.eg
+                    givenCapEx = args.cg
+                dcfs[1] = historical_DCF(input['ticker'], args.y, args.p, args.d, givenAvgGrowth , givenCapEx, args.pg, args.i, args.apikey,0,args.uavg)
                 dcf = dcfs[0]
                 dcf['avg_capex'] = avcg
                 dcf['avg_growth'] = dcfs[0]['earnings_growth_rate']
