@@ -9,6 +9,8 @@ from urllib.request import urlopen
 import os
 import json, traceback
 import yfinance as yf
+import requests
+from pandas_datareader import data as pdr
 
 # https://financialmodelingprep.com/api/v3/financials/income-statement/AAPL?apikey=d37f0d6c0868aba689aa989c5f87d658
 def get_api_url(requested_data, ticker, period, apikey):
@@ -160,12 +162,24 @@ def get_stock_price(ticker, apikey=''):
     """
     # url = 'https://financialmodelingprep.com/api/v3/stock/real-time-price/{ticker}?apikey={apikey}'.format(
     #     ticker=ticker, apikey=apikey)
+    # yf.pdr_override()
     # stock_info = yf.Ticker(ticker).info
-    # cf = yf.Ticker(ticker).cashflow
+    # stock_info = pdr.get_data_yahoo(ticker,start="2023-01-25", end="2023-01-25")
+    # cf = pdr.Ticker(ticker).cashflow
     # stock_info.keys() for other properties you can explore
+    # r = requests.get(url="https://query1.finance.yahoo.com/v10/finance/quoteSummary/"+ticker+"?modules=financialData")
+    # stock_info = r.json();
+
+    # ticker = yf.Ticker(ticker)
+    # hist  = ticker.history(period="1d")
+    # df = hist.reset_index()
+    # market_price = {}
+    # for index, row in df.iterrows():
+    #     market_price['price']  = row['Close']
     market_price = {}
-    # market_price['price'] = stock_info['regularMarketPrice']
-    market_price['price'] = float(0)
+    stock_info = yf.Ticker(ticker).info
+    market_price['price'] = stock_info['regularMarketPrice']
+    # market_price['price'] = float(0)
     return market_price
 
 
