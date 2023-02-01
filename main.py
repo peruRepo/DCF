@@ -56,6 +56,10 @@ def main(args):
                 cond, dcfs = {'Ticker': [input['ticker']]}, {}
                 aveg = calculate_avg_growth_from_ticker(input['ticker'],args.i,args.apikey)
                 avcg = calculate_avg_capitol_exp_from_ticker(input['ticker'], args.i, args.apikey)
+                # quaterGrowth = (aveg + 1)**(0.25) - 1
+                # quaterCapExGrowth = (avcg + 1) ** (0.25) - 1
+                quaterGrowth = aveg
+                quaterCapExGrowth = avcg
                 currentPrice = get_stock_price(input['ticker'])['price']
                 dcfs[0] = historical_DCF(input['ticker'], args.y, args.p, args.d, aveg, avcg, args.pg, args.i, args.apikey,0,args.uavg)
                 dcfs[0]['current_price'] = currentPrice
@@ -66,12 +70,18 @@ def main(args):
                     givenAvgGrowth = args.eg
                     givenCapEx = args.cg
                 dcfs[1] = historical_DCF(input['ticker'], args.y, args.p, args.d, givenAvgGrowth , givenCapEx, args.pg, args.i, args.apikey,0,args.uavg)
+                dcfs[2] = historical_DCF(input['ticker'], args.y, args.p, args.d, quaterGrowth, quaterCapExGrowth, args.pg,
+                                         'quater', args.apikey, 0, False)
+
                 dcf = dcfs[0]
                 dcf['avg_capex'] = avcg
                 dcf['avg_growth'] = dcfs[0]['earnings_growth_rate']
                 dcf['forecasted_share_price_avg_growth'] = dcfs[0]['forecasted_share_price']
                 dcf['eg_growth'] = dcfs[1]['earnings_growth_rate']
                 dcf['forecasted_share_price_eg_growth'] = dcfs[1]['forecasted_share_price']
+
+                dcf['forecasted_share_price_quaterly_growth'] = dcfs[2]['forecasted_share_price']
+
                 dcf.pop('earnings_growth_rate')
                 dcf.pop('forecasted_share_price')
                 result.append(dcf)
