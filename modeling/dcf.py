@@ -118,9 +118,9 @@ def historical_DCF(ticker, years, forecast, discount_rate, earnings_growth_rate,
             try:
                 dcf = DCF(ticker,
                           enterprise_value_statement[interval],
-                          income_statement[interval:interval + 10],  # pass year + 1 bc we need change in working capital
-                          balance_statement[interval:interval + 10],
-                          cashflow_statement[interval:interval + 10],
+                          income_statement[interval:interval + 5],  # pass year + 1 bc we need change in working capital
+                          balance_statement[interval:interval + 5],
+                          cashflow_statement[interval:interval + 5],
                           discount_rate,
                           forecast,
                           earnings_growth_rate,
@@ -331,7 +331,7 @@ def calculate_avg_growth_from_ticker(ticker, interval, apikey):
     prev = float(0.0)
     growthPC = []
     for financial in reversed(financials):
-        if (parse(financial["date"]) > parse('2010-01-01')):
+        if (parse(financial["date"]) > parse('2015-01-01')):
             if (prev != 0.0):
                 # if Decimal(financial["Free Cash Flow"]) < 0 or prev < 0:
                 #     growth = (abs(Decimal(financial["Free Cash Flow"])) - abs(prev)) / abs(prev)
@@ -353,7 +353,7 @@ def calculate_avg_capitol_exp_from_ticker(ticker, interval, apikey):
     prev = 0.0
     growthPC = []
     for financial in reversed(financials):
-        if (parse(financial["date"]) > parse('2010-01-01')):
+        if (parse(financial["date"]) > parse('2015-01-01')):
             if (prev != 0.0):
                 growthPC.append((float(financial["Capital Expenditure"]) - prev) / prev)
             prev = float(financial["Capital Expenditure"])
