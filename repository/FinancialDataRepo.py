@@ -26,7 +26,7 @@ def get_cashflow_statement_yf(ticker, period='annual', statementName='cashflow_s
     for st in stat:
         st["Depreciation & Amortization"] = st["Depreciation And Amortization"]
 
-    cache_response(ticker, stat, statementName, tickerName)
+    cache_response(ticker, stat, statementName, tickerName, period)
     return stat
 
 
@@ -52,7 +52,7 @@ def get_income_statement_yf(ticker, period='annual', statementName='income_statm
         st["Income Tax Expense"] = st["Tax Provision"]
         st["Earnings before Tax"] = st["Pretax Income"]
 
-    cache_response(ticker, stat, statementName, tickerName)
+    cache_response(ticker, stat, statementName, tickerName, period)
     return stat
 
 
@@ -76,7 +76,7 @@ def get_balance_statement_yf(ticker, period='annual', statementName='balance_sta
         st['Total assets'] = st['Total Assets']
         st['Total non-current assets'] = st['Total Non Current Assets']
 
-    cache_response(ticker, stat, statementName, tickerName)
+    cache_response(ticker, stat, statementName, tickerName, period)
     return stat
 
 
@@ -110,13 +110,13 @@ def fetch_given_statement_yf(ticker, statementName, period, tickerName):
      return stat
 
 
-def cache_response(ticker, data, statmentName, tickerName):
+def cache_response(ticker, data, statmentName, tickerName, period):
     # json_data = json.dumps(data, indent=4)
     directory = ''
     if (not os.environ.get('cache_dir') == ''):
         directory = os.environ.get('cache_dir')
     fileName = statmentName + '-' + tickerName + '.json'
-    fileName = directory + 'yf/' +fileName
+    fileName = directory + 'yf/' + period + '/' +fileName
 
     with open(fileName, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
@@ -144,3 +144,8 @@ def aggregate_quaterly_yearly(q_statement):
 def get_availiable_shares(ticker_info):
     fast_info = ticker_info.fast_info
     return fast_info["shares"]
+
+def get_share_info(ticker_info):
+    share_info = ticker_info.info
+    return share_info
+
