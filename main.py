@@ -70,8 +70,8 @@ def main(args):
                     givenAvgGrowth = args.eg
                     givenCapEx = args.cg
                 dcfs[1] = historical_DCF(input['ticker'], args.y, args.p, args.d, givenAvgGrowth , givenCapEx, args.pg, args.i, args.apikey,0,args.uavg)
-                dcfs[2] = historical_DCF(input['ticker'], args.y, args.p, args.d, quaterGrowth, quaterCapExGrowth, args.pg,
-                                         'quater', args.apikey, 0, False)
+                # dcfs[2] = historical_DCF(input['ticker'], args.y, args.p, args.d, quaterGrowth, quaterCapExGrowth, args.pg,
+                #                        'quater', args.apikey, 0, False)
 
                 dcf = dcfs[0]
                 dcf['avg_capex'] = avcg
@@ -80,7 +80,7 @@ def main(args):
                 dcf['eg_growth'] = dcfs[1]['earnings_growth_rate']
                 dcf['forecasted_share_price_eg_growth'] = dcfs[1]['forecasted_share_price']
 
-                dcf['forecasted_share_price_quaterly_growth'] = dcfs[2]['forecasted_share_price']
+                # dcf['forecasted_share_price_quaterly_growth'] = dcfs[2]['forecasted_share_price']
 
                 dcf.pop('earnings_growth_rate')
                 dcf.pop('forecasted_share_price')

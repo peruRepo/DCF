@@ -12,7 +12,7 @@ import yfinance as yf
 import requests
 from pandas_datareader import data as pdr
 
-# https://financialmodelingprep.com/api/v3/financials/income-statement/AAPL?apikey=d37f0d6c0868aba689aa989c5f87d658
+# https://financialmodelingprep.com/api/v3/financials/income-statement/AAPL?apikey=
 def get_api_url(requested_data, ticker, period, apikey):
     if period == 'annual':
         url = 'https://financialmodelingprep.com/api/v3/{requested_data}/{ticker}?apikey={apikey}'.format(
