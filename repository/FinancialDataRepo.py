@@ -80,12 +80,12 @@ def get_balance_statement_yf(ticker, period='annual', statementName='balance_sta
     return stat
 
 
-def get_from_cache(ticker, statmentName):
+def get_from_cache(ticker, statmentName, period):
     directory = ''
     if (not os.environ.get('cache_dir') == ''):
         directory = os.environ.get('cache_dir')
     fileName = statmentName + '-' + ticker + '.json'
-    fileName = directory + "yf/" + fileName
+    fileName = directory + "yf/" + period + "/" + fileName
 
     json_data = {}
     if os.path.exists(fileName):
@@ -98,7 +98,7 @@ def get_from_cache(ticker, statmentName):
 
 
 def fetch_given_statement_yf(ticker, statementName, period, tickerName):
-     stat = get_from_cache(tickerName, statementName)
+     stat = get_from_cache(tickerName, statementName, period)
      if(stat is None):
         if statementName == 'cashflow_statement':
             stat = get_cashflow_statement_yf(ticker, period, statementName, tickerName)
