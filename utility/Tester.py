@@ -7,7 +7,7 @@ from yahooquery import Ticker
 aapl = Ticker('aapl')
 bs = aapl.balance_sheet(frequency="a", trailing=True)
 print(bs.to_json('bs.json', orient='records', lines=True));
-cf= aapl.cashflow(trailing=True,frequency='q')
+cf= aapl.cash_flow(trailing=True,frequency='q')
 print(cf.to_json('cf.json', orient='records', lines=True));
 
 

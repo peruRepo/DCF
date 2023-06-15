@@ -11,9 +11,9 @@ def get_stock_info_yf(ticker):
 def get_cashflow_statement_yf(ticker, period='annual', statementName='cashflow_statment', tickerName=''):
     # ticker = yf.Ticker(ticker)
     if (period == 'quater'):
-        cf = ticker.cashflow(trailing=True,frequency='q')
+        cf = ticker.cash_flow(trailing=True,frequency='q')
     else:
-        cf = ticker.cashflow(trailing=True,frequency='a')
+        cf = ticker.cash_flow(trailing=True,frequency='a')
 
     stat = []
     ls = cf.to_dict('dict')
