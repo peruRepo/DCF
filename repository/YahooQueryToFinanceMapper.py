@@ -42,7 +42,7 @@ class YahooQueryToFinanceMapper:
             input_dict = item
             
             output_dict = {
-                "date": "2021-09-25",
+                "date": str(input_dict.get("asOfDate", "")),
                 "Cash and cash equivalents": str(input_dict.get("CashAndCashEquivalents", "")),
                 "Short-term investments": str(input_dict.get("OtherShortTermInvestments", "")),
                 "Cash and short-term investments": str(
