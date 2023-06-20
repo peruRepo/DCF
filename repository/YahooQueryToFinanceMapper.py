@@ -33,3 +33,49 @@ class YahooQueryToFinanceMapper:
             output_list.append(output_dict)
 
         return json.dumps(output_list, indent=4)
+
+    def convert_bs(self,input_json):
+        output_list = []
+        input_array = json.loads(input_json)
+        lines = json.loads(self.input_json)
+        for item in lines:
+            input_dict = item
+            
+            output_dict = {
+                "date": "2021-09-25",
+                "Cash and cash equivalents": str(input_dict.get("CashAndCashEquivalents", "")),
+                "Short-term investments": str(input_dict.get("OtherShortTermInvestments", "")),
+                "Cash and short-term investments": str(
+                    input_dict.get("CashCashEquivalentsAndShortTermInvestments", "")),
+                "Receivables": str(input_dict.get("Receivables", "")),
+                "Inventories": str(input_dict.get("Inventory", "")),
+                "Total current assets": str(input_dict.get("CurrentAssets", "")),
+                "Property, Plant & Equipment Net": str(input_dict.get("NetPPE", "")),
+                "Goodwill and Intangible Assets": str(input_dict.get("OtherNonCurrentAssets", "")),
+                "Long-term investments": str(input_dict.get("InvestmentsAndAdvances", "")),
+                "Tax assets": str(input_dict.get("TaxAssets", "")),
+                "Total non-current assets": str(input_dict.get("TotalNonCurrentAssets", "")),
+                "Total assets": str(input_dict.get("TotalAssets", "")),
+                "Payables": str(input_dict.get("Payables", "")),
+                "Short-term debt": str(input_dict.get("CurrentDebt", "")),
+                "Total current liabilities": str(input_dict.get("CurrentLiabilities", "")),
+                "Long-term debt": str(input_dict.get("LongTermDebt", "")),
+                "Total debt": str(input_dict.get("TotalDebt", "")),
+                "Deferred revenue": str(input_dict.get("CurrentDeferredRevenue", "")),
+                "Tax Liabilities": "",
+                "Deposit Liabilities": "",
+                "Total non-current liabilities": str(
+                    input_dict.get("TotalNonCurrentLiabilitiesNetMinorityInterest", "")),
+                "Total liabilities": str(input_dict.get("TotalLiabilitiesNetMinorityInterest", "")),
+                "Other comprehensive income": str(input_dict.get("GainsLossesNotAffectingRetainedEarnings", "")),
+                "Retained earnings (deficit)": str(input_dict.get("RetainedEarnings", "")),
+                "Total shareholders equity": str(input_dict.get("TotalEquityGrossMinorityInterest", "")),
+                "Investments": str(input_dict.get("InvestmentinFinancialAssets", "")),
+                "Net Debt": str(input_dict.get("NetDebt", "")),
+                "Other Assets": str(input_dict.get("OtherNonCurrentAssets", "")),
+                "Other Liabilities": str(input_dict.get("OtherNonCurrentLiabilities", ""))
+            }
+
+            output_list.append(output_dict)
+        
+        return json.dumps(output_list, indent=4)
