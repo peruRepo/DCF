@@ -10,13 +10,17 @@ from repository.YahooQueryToFinanceMapper import YahooQueryToFinanceMapper
 aapl = Ticker('aapl')
 # bs = aapl.balance_sheet(frequency="a", trailing=True)
 # print(bs.to_json('bs.json', orient='records', lines=True));
-cf= aapl.cash_flow(trailing=True,frequency='q')
-converter = YahooQueryToFinanceMapper(cf.to_json(orient='records'))
-output_json = converter.convert_cashflow()
-# print(cf.to_json('cf.json', orient='records', lines=True));
+enterpriseValue= aapl.all_financial_data(frequency="q")
+# converter = YahooQueryToFinanceMapper(cf.to_json(orient='records'))
+# output_json = converter.convert_income_statement()
+# ev = TotalCapitalization + TotalDebt
+# CashAndCashEquivalents
+# Market Capitalization = TotalCapitalization
+#  BasicAverageShares
+print(enterpriseValue.to_json('enp.json', orient='records', lines=True));
 
 
-print(output_json)
+# print(output_json)
 
 # first stock
 # ticker = yf.Ticker('AAPL')
