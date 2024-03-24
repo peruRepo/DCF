@@ -8,6 +8,34 @@ def get_stock_info_yf(ticker):
     return yq.Ticker(ticker)
 
 
+def get_EV_statement_yf(ticker):
+    """
+    Fetch EV statement, with details like total shares outstanding, from FMP.com
+
+    args:
+        ticker: company tickerr
+    returns:
+        parsed EV statement
+    """
+    ticker_info = ticker.info
+    cash_and_cash_equivalents = ticker_info.get('totalCash')
+    total_debt = ticker_info.get('totalDebt')
+    total_shares = ticker_info.get('sharesOutstanding')
+
+    data = {
+        'Cash & Cash Equivalents': cash_and_cash_equivalents,
+        'Total Debt': total_debt,
+        'Total Shares Outstanding': total_shares,
+        '- Cash & Cash Equivalents': cash_and_cash_equivalents,
+        '+ Total Debt': total_debt,
+        'Number of Shares': total_shares
+    }
+
+    # Convert the dictionary to a DataFrame
+    ev = []
+    ev.append(data)
+    return ev
+
 def get_cashflow_statement_yf(ticker, period='annual', statementName='cashflow_statment', tickerName=''):
     # ticker = yf.Ticker(ticker)
     if (period == 'quater'):

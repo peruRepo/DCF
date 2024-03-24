@@ -3,7 +3,7 @@ import csv
 from csv import DictReader
 
 def read_csv_file():
-    with open('input.csv', mode='r') as file:
+    with open('input2.csv', mode='r') as file:
         # reading the CSV file
         dict_reader = DictReader(file)
         input = list(dict_reader)

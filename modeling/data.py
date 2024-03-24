@@ -242,5 +242,5 @@ if __name__ == '__main__':
 
     ticker = 'AAPL'
     apikey = '<DEMO>'
-    data = get_cashflow_statement(ticker=ticker, apikey=apikey)
-    print(data)
+    # data = get_cashflow_statement(ticker=ticker, apikey=apikey)
+    # print(data)

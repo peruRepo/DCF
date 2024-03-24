@@ -8,6 +8,9 @@ from modeling.AverageUtil import *
 from repository.FinancialDataRepo import *
 from datetime import datetime
 
+from repository.YahooQueryDataRepo import get_EV_statement_yf
+
+
 def DCF(ticker, ev_statement, income_statement, balance_statement, cashflow_statement, discount_rate,
         forecast, earnings_growth_rate, cap_ex_growth_rate, perpetual_growth_rate, givenEbit, useAverage):
     """
@@ -77,21 +80,26 @@ def historical_DCF(ticker, years, forecast, discount_rate, earnings_growth_rate,
         cashflow_statement = aggregate_quaterly_yearly(
             fetch_given_statement_yf(ticker=ticker_info, statementName="cashflow_statement", period=interval,
                                      tickerName=ticker))
-        enterprise_value_statement = get_EV_statement(ticker=ticker, period='annual', apikey=apikey)['enterpriseValues']
-
+        # Below statment get the data from FM
+        # enterprise_value_statement = get_EV_statement(ticker=ticker, period='annual', apikey=apikey)['enterpriseValues']
+        enterprise_value_statement = get_EV_statement_yf(ticker_info)
     else:
-        income_statement = get_income_statement(ticker=ticker, period=interval, apikey=apikey)['financials']
-        balance_statement = get_balance_statement(ticker=ticker, period=interval, apikey=apikey)['financials']
-        cashflow_statement = get_cashflow_statement(ticker=ticker, period=interval, apikey=apikey)['financials']
-        # income_statement =  fetch_given_statement_yf(ticker=ticker_info, statementName="income_statement", period=interval,
-        #                              tickerName=ticker)
-        # balance_statement =   fetch_given_statement_yf(ticker=ticker_info, statementName="balance_statement", period=interval,
-        #                              tickerName=ticker)
-        # cashflow_statement =  fetch_given_statement_yf(ticker=ticker_info, statementName="cashflow_statement", period=interval,
-        #                              tickerName=ticker)
-        enterprise_value_statement = get_EV_statement(ticker=ticker, period=interval, apikey=apikey)['enterpriseValues']
+        # Activate for FM  when Yahoo finance fails
+        # income_statement = get_income_statement(ticker=ticker, period=interval, apikey=apikey)['financials']
+        # balance_statement = get_balance_statement(ticker=ticker, period=interval, apikey=apikey)['financials']
+        # cashflow_statement = get_cashflow_statement(ticker=ticker, period=interval, apikey=apikey)['financials']
+        # enterprise_value_statement = get_EV_statement(ticker=ticker, period=interval, apikey=apikey)['enterpriseValues']
+        # enterprise_value_statement[0]["Number of Shares"] = get_availiable_shares(ticker_info)
+        #  Activate below for YF
+        income_statement =  fetch_given_statement_yf(ticker=ticker_info, statementName="income_statement", period=interval,
+                                     tickerName=ticker)
+        balance_statement =   fetch_given_statement_yf(ticker=ticker_info, statementName="balance_statement", period=interval,
+                                     tickerName=ticker)
+        cashflow_statement =  fetch_given_statement_yf(ticker=ticker_info, statementName="cashflow_statement", period=interval,
+                                     tickerName=ticker)
+        enterprise_value_statement = get_EV_statement_yf(ticker_info)
 
-    enterprise_value_statement[0]["Number of Shares"] = get_availiable_shares(ticker_info)
+
 
     if interval == 'quater':
         intervals = years * 4
@@ -319,9 +327,13 @@ def calculate_avg_growth(cashflow_statement):
 
 
 def calculate_avg_growth_from_ticker(ticker, interval, apikey):
-    cf_statements = get_cashflow_statement(ticker=ticker, period=interval, apikey=apikey)['financials']
-    bal_statements = get_balance_statement(ticker=ticker, period=interval, apikey=apikey)['financials'][::-1]
-    inc_statements = get_income_statement(ticker=ticker, period=interval, apikey=apikey)['financials'][::-1]
+    # cf_statements = get_cashflow_statement(ticker=ticker, period=interval, apikey=apikey)['financials']
+    # bal_statements = get_balance_statement(ticker=ticker, period=interval, apikey=apikey)['financials'][::-1]
+    # inc_statements = get_income_statement(ticker=ticker, period=interval, apikey=apikey)['financials'][::-1]
+    ticker_info = get_stock_info_yf(ticker)
+    cf_statements = fetch_given_statement_yf(ticker=ticker_info, statementName="cashflow_statement",
+                                                  period=interval,
+                                                  tickerName=ticker)
 
     prev = float(0.0)
     growthPC = []
@@ -357,7 +369,11 @@ def calculate_free_cash_flow(cashflow_statement,balance_statement,income_stateme
     return free_cash_flow
 
 def calculate_avg_capitol_exp_from_ticker(ticker, interval, apikey):
-    financials = get_cashflow_statement(ticker=ticker, period=interval, apikey=apikey)['financials']
+    ticker_info = get_stock_info_yf(ticker)
+    financials = fetch_given_statement_yf(ticker=ticker_info, statementName="cashflow_statement",
+                                                  period=interval,
+                                                  tickerName=ticker)
+    # financials = get_cashflow_statement(ticker=ticker, period=interval, apikey=apikey)['financials']
     prev = 0.0
     growthPC = []
     for financial in reversed(financials):

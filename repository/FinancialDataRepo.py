@@ -1,7 +1,7 @@
 import yfinance as yf
 import os
 import json, traceback
-
+import pandas as pd
 
 def get_stock_info_yf(ticker):
     return yf.Ticker(ticker)
