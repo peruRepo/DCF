@@ -20,6 +20,30 @@ from visualization.plot import *
 from visualization.printouts import *
 from utility.fileUtil import *
 
+#  Explanation for all arguments
+# --p
+# 10
+# --aveg
+# True
+# --uavg
+# True
+# --uf   # Use file as Input
+# True
+# --i  # interval 'annual' or 'quarter'
+# annual
+# --y
+# 1
+# --eg
+# 0.10
+# --d
+# 0.10
+# --cg
+# 0.045
+# --pg
+# 0.025
+# --apikey
+# Not Needed for YF only needed for FM
+
 
 def main(args):
     """

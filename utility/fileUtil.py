@@ -11,7 +11,7 @@ def read_csv_file():
 
 
 def write_csv_file(dcf):
-    filename = "output.csv"
+    filename = "output3.csv"
     fields = ['date', 'Ticker', 'current_price', 'avg_growth', 'avg_capex','forecasted_share_price_avg_growth',
   'eg_growth','forecasted_share_price_eg_growth','forecasted_share_price_quaterly_growth']
     # writing to csv file

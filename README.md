@@ -4,8 +4,28 @@
 
  Argument              | Usage          
 ----------------------- | ------------------
---uf   --use_file              | This property allow the user to give more than one ticker
---aveg  --average_earnings_growth_rate             | Use Average Free cash flow growth rate to forecast share price
+--p\
+10\
+--aveg\
+True\
+--uavg\
+True\
+--uf\
+True\
+--i\
+annual\
+--y\
+1\
+--eg\
+0.10\
+--d\
+0.10\
+--cg\
+0.045\
+--pg\
+0.025\
+--apikey\
+blaw
 
 
   **Removed Ability to plot graph**

@@ -133,7 +133,7 @@ def historical_DCF(ticker, years, forecast, discount_rate, earnings_growth_rate,
         for interval in range(0, intervals):
             try:
                 dcf = DCF(ticker,
-                          enterprise_value_statement[interval],
+                          enterprise_value_statement[0],
                           income_statement[interval:interval + 5],  # pass year + 1 bc we need change in working capital
                           balance_statement[interval:interval + 5],
                           cashflow_statement[interval:interval + 5],
@@ -340,7 +340,7 @@ def calculate_avg_growth_from_ticker(ticker, interval, apikey):
 
     count = 0;
     for cf in reversed(cf_statements):
-        if (parse(cf["date"]) > parse('2015-01-01')):
+        if (parse(cf["date"]) > parse('2010-01-01')):
             free_cash_flow = float(cf["Free Cash Flow"])
             # free_cash_flow = calculate_free_cash_flow(cf_statements[count-2:count], bal_statements[count-2:count], inc_statements[count])
             if (prev != 0.0):
