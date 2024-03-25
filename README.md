@@ -67,17 +67,28 @@ As of now, command line arguments are used to parse parameters. See main.py for 
 
 ```
 python main.py \
-        --period        
-        --ticker        
-        --years         
-        --interval      
-        --step_increase 
-        --steps         
-        --variable      
-        --discount_rate 
-        --earnings_growth_rate 
-        --perpetual_growth_rate
-        --apikey
+--p
+10
+--aveg
+True
+--uavg
+True
+--uf
+True
+--i
+annual
+--y
+1
+--eg
+0.10
+--d
+0.10
+--cg
+0.045
+--pg
+0.025
+--apikey
+blaw
 ```
 
   Argument              | Usage          
