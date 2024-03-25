@@ -4,8 +4,8 @@
 
  Argument              | Usage          
 ----------------------- | ------------------
---p\
-10\
+--p\  | Period of years to calculate future earning
+10\   | Value for P
 --aveg\
 True\
 --uavg\
