@@ -8,7 +8,7 @@ def get_stock_info_yf(ticker):
     return yq.Ticker(ticker)
 
 
-def get_EV_statement_yf(ticker):
+def get_EV_statement_yf(ticker, balance_statement):
     """
     Fetch EV statement, with details like total shares outstanding, from FMP.com
 
@@ -18,8 +18,11 @@ def get_EV_statement_yf(ticker):
         parsed EV statement
     """
     ticker_info = ticker.info
-    cash_and_cash_equivalents = ticker_info.get('totalCash')
-    total_debt = ticker_info.get('totalDebt')
+    total_debt = balance_statement[0]['Total Debt']
+    cash_and_cash_equivalents = balance_statement[0]['Cash And Cash Equivalents']
+    # ticker_info.get('totalCash')
+
+        # ticker_info.get('totalDebt'))
     total_shares = ticker_info.get('sharesOutstanding')
 
     data = {

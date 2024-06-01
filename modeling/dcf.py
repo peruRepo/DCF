@@ -82,7 +82,7 @@ def historical_DCF(ticker, years, forecast, discount_rate, earnings_growth_rate,
                                      tickerName=ticker))
         # Below statment get the data from FM
         # enterprise_value_statement = get_EV_statement(ticker=ticker, period='annual', apikey=apikey)['enterpriseValues']
-        enterprise_value_statement = get_EV_statement_yf(ticker_info)
+        enterprise_value_statement = get_EV_statement_yf(ticker_info, balance_statement)
     else:
         # Activate for FM  when Yahoo finance fails
         # income_statement = get_income_statement(ticker=ticker, period=interval, apikey=apikey)['financials']
@@ -97,7 +97,7 @@ def historical_DCF(ticker, years, forecast, discount_rate, earnings_growth_rate,
                                      tickerName=ticker)
         cashflow_statement =  fetch_given_statement_yf(ticker=ticker_info, statementName="cashflow_statement", period=interval,
                                      tickerName=ticker)
-        enterprise_value_statement = get_EV_statement_yf(ticker_info)
+        enterprise_value_statement = get_EV_statement_yf(ticker_info, balance_statement)
 
 
 
@@ -197,12 +197,33 @@ def equity_value(enterprise_value, enterprise_value_statement):
         equity_value: (enterprise value - debt + cash)
         share_price: equity value/shares outstanding
     """
-    equity_val = enterprise_value - enterprise_value_statement['+ Total Debt']
-    equity_val += enterprise_value_statement['- Cash & Cash Equivalents']
+
+    equity_val = enterprise_value
+    # equity_val = enterprise_value - enterprise_value_statement['+ Total Debt']
+    # equity_val += enterprise_value_statement['- Cash & Cash Equivalents']
     share_price = equity_val / float(enterprise_value_statement['Number of Shares'])
 
     return equity_val, share_price
 
+def equity_value(enterprise_value, enterprise_value_statement, balance_statement):
+    """
+    Given an enterprise value, return the equity value by adjusting for cash/cash equivs. and total debt.
+
+    args:
+        enterprise_value: (EV = market cap + total debt - cash), or total value
+        enterprise_value_statement: information on debt & cash
+
+    returns:
+        equity_value: (enterprise value - debt + cash)
+        share_price: equity value/shares outstanding
+    """
+
+    equity_val = enterprise_value
+    # equity_val = enterprise_value - enterprise_value_statement['+ Total Debt']
+    # equity_val += enterprise_value_statement['- Cash & Cash Equivalents']
+    share_price = equity_val / float(enterprise_value_statement['Number of Shares'])
+
+    return equity_val, share_price
 
 def enterprise_value(income_statement, cashflow_statement, balance_statement, period,
                      discount_rate, earnings_growth_rate, cap_ex_growth_rate, perpetual_growth_rate, givenEbit,
@@ -227,21 +248,21 @@ def enterprise_value(income_statement, cashflow_statement, balance_statement, pe
         income_statement = find_average_each_element(income_statement);
         cashflow_statement = find_average_each_element(cashflow_statement);
         balance_statement = find_average_each_element(balance_statement);
-        if income_statement[-1]['EBIT']:
-            ebit = float(income_statement[-1]['EBITDA']) - float(cashflow_statement[-1]['Depreciation & Amortization'])
-            ebit = float(income_statement[-1]['EBIT'])
+        if income_statement[0]['EBIT']:
+            ebit = float(income_statement[0]['EBITDA']) - float(cashflow_statement[0]['Depreciation & Amortization'])
+            ebit = float(income_statement[0]['EBIT'])
         elif givenEbit != 0:
             ebit = givenEbit
         else:
             raise Exception("EBIT is missing")
 
-        tax_rate = float(income_statement[-1]['Income Tax Expense']) / \
-                   float(income_statement[-1]['Earnings before Tax'])
-        non_cash_charges = float(cashflow_statement[-1]['Depreciation & Amortization'])
-        cwc = (float(balance_statement[-1]['Total assets']) - float(
-            balance_statement[-1]['Total non-current assets'])) - \
+        tax_rate = float(income_statement[0]['Income Tax Expense']) / \
+                   float(income_statement[0]['Earnings before Tax'])
+        non_cash_charges = float(cashflow_statement[0]['Depreciation & Amortization'])
+        cwc = (float(balance_statement[0]['Total assets']) - float(
+            balance_statement[0]['Total non-current assets'])) - \
               (float(balance_statement[0]['Total assets']) - float(balance_statement[0]['Total non-current assets']))
-        cap_ex = float(cashflow_statement[-1]['Capital Expenditure'])
+        cap_ex = float(cashflow_statement[0]['Capital Expenditure'])
         discount = discount_rate
     else:
         if income_statement[0]['EBIT']:
