@@ -248,7 +248,7 @@ def enterprise_value(income_statement, cashflow_statement, balance_statement, pe
         income_statement = find_average_each_element(income_statement);
         cashflow_statement = find_average_each_element(cashflow_statement);
         balance_statement = find_average_each_element(balance_statement);
-        if income_statement[-1]['EBIT']:
+        if income_statement[0]['EBIT']:
             ebit = float(income_statement[0]['EBITDA']) - float(cashflow_statement[0]['Depreciation & Amortization'])
             ebit = float(income_statement[0]['EBIT'])
         elif givenEbit != 0:
@@ -258,11 +258,11 @@ def enterprise_value(income_statement, cashflow_statement, balance_statement, pe
 
         tax_rate = float(income_statement[0]['Income Tax Expense']) / \
                    float(income_statement[0]['Earnings before Tax'])
-        non_cash_charges = float(cashflow_statement[-1]['Depreciation & Amortization'])
-        cwc = (float(balance_statement[-1]['Total assets']) - float(
-            balance_statement[-1]['Total non-current assets'])) - \
+        non_cash_charges = float(cashflow_statement[0]['Depreciation & Amortization'])
+        cwc = (float(balance_statement[0]['Total assets']) - float(
+            balance_statement[0]['Total non-current assets'])) - \
               (float(balance_statement[0]['Total assets']) - float(balance_statement[0]['Total non-current assets']))
-        cap_ex = float(cashflow_statement[-1]['Capital Expenditure'])
+        cap_ex = float(cashflow_statement[0]['Capital Expenditure'])
         discount = discount_rate
     else:
         if income_statement[0]['EBIT']:
