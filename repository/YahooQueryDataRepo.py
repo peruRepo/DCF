@@ -3,6 +3,8 @@ import os
 import json, traceback
 from yahooquery import Ticker as yq
 
+from utility.CommonUtil import isFloat
+
 
 def get_stock_info_yf(ticker):
     return yq.Ticker(ticker)
@@ -56,7 +58,15 @@ def get_cashflow_statement_yf(ticker, period='annual', statementName='cashflow_s
         stat.append(st)
 
     for st in stat:
+        # Capital Expenditure
+        # Operating Cash Flow
+        # Depreciation & Amortization
         st["Depreciation & Amortization"] = st["Depreciation And Amortization"]
+        if (not isFloat(st["Depreciation & Amortization"]) or
+                not isFloat(st["Capital Expenditure"]) or
+                not isFloat(st["Operating Cash Flow"])):
+            stat.remove(st)
+
 
     cache_response(ticker, stat, statementName, tickerName, period)
     return stat
@@ -83,6 +93,7 @@ def get_income_statement_yf(ticker, period='annual', statementName='income_statm
     for st in stat:
         st["Income Tax Expense"] = st["Tax Provision"]
         st["Earnings before Tax"] = st["Pretax Income"]
+        stat.remove(st)
 
     cache_response(ticker, stat, statementName, tickerName, period)
     return stat

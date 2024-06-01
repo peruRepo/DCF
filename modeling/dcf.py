@@ -9,6 +9,7 @@ from repository.FinancialDataRepo import *
 from datetime import datetime
 
 from repository.YahooQueryDataRepo import get_EV_statement_yf
+from utility.CommonUtil import isFloat
 
 
 def DCF(ticker, ev_statement, income_statement, balance_statement, cashflow_statement, discount_rate,
@@ -37,7 +38,7 @@ def DCF(ticker, ev_statement, income_statement, balance_statement, cashflow_stat
                                       useAverage)
 
     equity_val, share_price = equity_value(enterprise_val,
-                                           ev_statement)
+                                           ev_statement, balance_statement)
 
     print('\nEnterprise Value for {}: ${}.'.format(ticker, '%.2E' % Decimal(str(enterprise_val))),
           '\nEquity Value for {}: ${}.'.format(ticker, '%.2E' % Decimal(str(equity_val))),
@@ -360,8 +361,13 @@ def calculate_avg_growth_from_ticker(ticker, interval, apikey):
     growthPC = []
 
     count = 0;
+
     for cf in reversed(cf_statements):
         if (parse(cf["date"]) > parse('2010-01-01')):
+            # Nan Check for Free Cash Flow
+            print(cf["Free Cash Flow"])
+            if not isFloat(cf["Free Cash Flow"]):
+                continue
             free_cash_flow = float(cf["Free Cash Flow"])
             # free_cash_flow = calculate_free_cash_flow(cf_statements[count-2:count], bal_statements[count-2:count], inc_statements[count])
             if (prev != 0.0):
@@ -398,6 +404,8 @@ def calculate_avg_capitol_exp_from_ticker(ticker, interval, apikey):
     prev = 0.0
     growthPC = []
     for financial in reversed(financials):
+        if not isFloat(financial["Capital Expenditure"]):
+            continue
         if (parse(financial["date"]) > parse('2015-01-01')):
             if (prev != 0.0):
                 growthPC.append((float(financial["Capital Expenditure"]) - prev) / prev)
