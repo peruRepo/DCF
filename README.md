@@ -8,6 +8,7 @@
 # DCF: Discounted Cash Flow
 
   This is the fork from https://github.com/halessi/DCF
+  
     1. I added ability to calculate DCFs with multiple stock from a CSV file and provides output to CSV
       which can be used for comparison
     2. Added ability to calculate DCFs based on Yearly and Quaterly data
