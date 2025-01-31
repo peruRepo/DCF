@@ -1,39 +1,4 @@
-# My Changes to the existing repo
 
-  **Added below Flag**
-
- Argument              | Usage          
------------------------ | ------------------
---p\
-10\
---aveg\
-True\
---uavg\
-True\
---uf\
-True\
---i\
-annual\
---y\
-1\
---eg\
-0.10\
---d\
-0.10\
---cg\
-0.045\
---pg\
-0.025\
---apikey\
-blaw
-
-
-  **Removed Ability to plot graph**
-     I prefer output in excel to compare against multiple earning growth
-
-
-**Next Steps :**
-  Calculate average CapEX
   
   
     
@@ -76,9 +41,35 @@ apikey                  | (Free) API Key to access financial data from [financia
 | 2023-06-30 | MSFT   | 428.74        | 0.1048     | 0.2235    | 57.62                               | 0.1       | 118.59                             |                                           |
 
 
+# My Changes to the existing repo
 
+  **Added below Flag**
 
-***Although far from a presentation-ready chart***, evident here is an increase in the DCF-forecasted per share value of AAPL that results from our specified increase in forecasted earnings growth (i.e. the variable we're examining). On the quarterly basis we see a large degree of seasonal variation, indicating that perhaps this particular DCF would benefit from a more specific [forecasting of cash flows](https://www.ersj.eu/repec/ers/papers/11_2_p2.pdf). 
+ Argument              | Usage          
+----------------------- | ------------------
+--p\
+10\
+--aveg\
+True\
+--uavg\
+True\
+--uf\
+True\
+--i\
+annual\
+--y\
+1\
+--eg\
+0.10\
+--d\
+0.10\
+--cg\
+0.045\
+--pg\
+0.025\
+--apikey\
+blaw
+
 
 ### References
 
